@@ -64,7 +64,7 @@ type
   ListFormat = enum
     lfADT, lfSTD
 
-proc asString[T](xs: List[T], f = lfSTD): string =
+proc asString[T](xs: List[T], f: ListFormat): string =
   proc asAdt(xs: List[T]): string =
     case xs.isEmpty
     of true: "Nil"
@@ -78,7 +78,7 @@ proc asString[T](xs: List[T], f = lfSTD): string =
 
 proc `$`*[T](xs: List[T]): string =
   ## Converts list to string
-  result = xs.asString
+  result = xs.asString(lfSTD)
 
 proc `^^`*[T](v: T, xs: List[T]): List[T] =
   ## List construction operator, like ``::`` in Haskell

@@ -11,6 +11,7 @@ suite "List ADT":
     check: lst.tail.asSeq == @[2, 3, 4, 5]
     check: $lst == "List(1, 2, 3, 4, 5)"
     check: 1^^2^^3^^4^^5^^Nil[int]() == lst
+    check: ["a", "b"].asList != ["a", "b", "c"].asList
 
   test "Fold operations":
     let lst = lc[x|(x <- 1..4),int].asList
@@ -29,5 +30,7 @@ suite "List ADT":
 
   test "Misc functions":
     let lst = lc[$x | (x <- 'a'..'z'), string].asList
-
+    # Next two lines are so ugly because of https://github.com/nim-lang/Nim/issues/3313
+    let lstEq = lst.dup == lst
+    check: lstEq
     check: lst.reverse == lc[$(('z'.int - x).char) | (x <- 0..('z'.int - 'a'.int)), string].asList
