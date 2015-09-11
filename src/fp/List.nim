@@ -45,7 +45,7 @@ proc `==`*[T](xs, ys: List[T]): bool =
   elif (xs.isEmpty, ys.isEmpty) == (false, false): xs.head == ys.head and xs.tail == ys.tail
   else: false
 
-proc initList*[T](xs: varargs[T]): List[T] =
+proc asList*[T](xs: varargs[T]): List[T] =
   ## Creates list from varargs
   proc initListImpl(i: int, xs: openarray[T]): List[T] =
     if i > high(xs):
