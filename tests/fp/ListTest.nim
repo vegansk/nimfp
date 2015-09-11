@@ -27,3 +27,7 @@ suite "List ADT":
     check: lst.drop(99) == [100].asList
     check: lst.dropWhile(x => x < 100) == [100].asList
 
+  test "Misc functions":
+    let lst = lc[$x | (x <- 'a'..'z'), string].asList
+
+    check: lst.reverse == lc[$(('z'.int - x).char) | (x <- 0..('z'.int - 'a'.int)), string].asList
