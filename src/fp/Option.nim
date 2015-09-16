@@ -35,23 +35,49 @@ proc `==`*[T](x, y: Option[T]): bool =
     false
 
 proc isEmpty*(o: Option): bool =
-  ## Checks if option object is empty
+  ## Checks if `o` is empty
   o.kind == okNone
 
 proc isDefined*(o: Option): bool =
-  ## Checks if option object contains value
+  ## Checks if `o` contains value
   not o.isEmpty
 
 proc `$`*[T](o: Option[T]): string =
-  ## Returns string representation of option object
+  ## Returns string representation of `o`
   if o.isDefined:
     "Some(" & $o.value & ")"
   else:
     "None"
   
 proc map*[T,U](o: Option[T], f: T -> U): Option[U] =
-  ## Returns option with result of applying f to v's value if it exists
+  ## Returns option with result of applying f to the value of `o` if it exists
   if o.isDefined:
     f(o.value).some
   else:
     U.none
+
+proc flatMap*[T,U](o: Option[T], f: T -> Option[U]): Option[U] =
+  ## Returns the result of applying `f` if `o` is defined, or none
+  if o.isDefined: f(o.value) else: U.none
+
+proc getOrElse*[T](o: Option[T], d: T): T =
+  ## Returns option's value if defined, or `d`
+  if o.isDefined: o.value else: d
+
+proc getOrElse*[T](o: Option[T], f: void -> T): T =
+  ## Returns option's value if defined, or the result of applying `f`
+  if o.isDefined: o.value else: f()
+  
+proc orElse*[T](o: Option[T], d: Option[T]): Option[T] =
+  ## Returns `o` if defined, or `d`
+  if o.isDefined: o else: d
+  
+proc orElse*[T](o: Option[T], f: void -> Option[T]): Option[T] =
+  ## Returns `o` if defined, or the result of applying `f`
+  if o.isDefined: o else: f()
+  
+proc filter*[T](o: Option[T], p: T -> bool): Option[T] =
+  ## Returns `o` if it is defined and the result of applying `p`
+  ## to it's value is true
+  if o.isDefined and p(o.value): o else: T.none
+
