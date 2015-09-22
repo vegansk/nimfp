@@ -1,4 +1,4 @@
-import ../../src/fp/Option, unittest, future
+import ../../src/fp/option, unittest, future
 
 {.warning[TypelessParam]: off.}
 

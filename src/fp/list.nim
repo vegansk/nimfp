@@ -1,4 +1,4 @@
-import future
+import future, option
 
 {.experimental.}
 
@@ -26,8 +26,13 @@ proc head*[T](xs: List[T]): T =
   ## Returns list's head
   xs.value
 
-# TODO
-# proc headOption*[T](xs: List[T]): Option[T] = ???
+proc isEmpty*(xs: List): bool =
+  ## Checks  if list is empty
+  xs.kind == lnkNil
+
+proc headOption*[T](xs: List[T]): Option[T] =
+  ## Returns list's head option
+  if xs.isEmpty: T.none else: xs.head.some
 
 proc tail*[T](xs: List[T]): List[T] =
   ## Returns list's tail
@@ -35,9 +40,11 @@ proc tail*[T](xs: List[T]): List[T] =
   of lnkCons: xs.next
   else: xs
 
-proc isEmpty*(xs: List): bool =
-  ## Checks  if list is empty
-  xs.kind == lnkNil
+iterator items*[T](xs: List[T]): T =
+  var curr = xs
+  while not curr.isEmpty:
+    yield curr.head
+    curr = curr.tail
 
 proc `==`*[T](xs, ys: List[T]): bool =
   ## Compares two lists
@@ -57,7 +64,7 @@ proc asList*[T](xs: varargs[T]): List[T] =
 proc asSeq*[T](xs: List[T]): seq[T] =
   ## Converts list to sequence
   var s: seq[T] = @[]
-  xs.forAll((v: T) => (add(s, v)))
+  xs.forEach((v: T) => (add(s, v)))
   result = s
 
 type
@@ -144,11 +151,20 @@ proc filter*[T](xs: List[T], p: T -> bool): List[T] =
   of true: xs
   else: (if p(xs.head): Cons(xs.head, filter(xs.tail, p)) else: filter(xs.tail, p))
 
-proc forAll*[T](xs: List[T], f: T -> void): void =
+proc forEach*[T](xs: List[T], f: T -> void): void =
   ## Executes operation for all elements in list
   if not xs.isEmpty:
     f(xs.head)
-    xs.tail.forAll(f)
+    xs.tail.forEach(f)
+
+proc forAll*[T](xs: List[T], p: T -> bool): bool =
+  ## Tests whether `p` holds for all elements of the list
+  if xs.isEmpty:
+    true
+  elif not p(xs.head):
+    false
+  else:
+    xs.tail.forAll(p)
 
 proc flatMap*[T,U](xs: List[T], f: T -> List[U]): List[U] =
   xs.map(f).join
