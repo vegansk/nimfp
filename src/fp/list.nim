@@ -24,6 +24,7 @@ proc Nil*[T](): List[T] =
 
 proc head*[T](xs: List[T]): T =
   ## Returns list's head
+  assert xs.kind == lnkCons
   xs.value
 
 proc isEmpty*(xs: List): bool =
