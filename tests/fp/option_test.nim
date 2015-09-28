@@ -1,7 +1,5 @@
 import ../../src/fp/option, unittest, future
 
-{.warning[TypelessParam]: off.}
-
 suite "Option ADT":
 
   test "Basic functions":
