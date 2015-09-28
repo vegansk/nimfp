@@ -1,4 +1,4 @@
-import ../../src/fp/either, unittest, future
+import ../../src/fp/list, ../../src/fp/either, unittest, future
 
 {.warning[SmallLshouldNotBeUsed]: off.}
 
@@ -41,6 +41,7 @@ suite "Either ADT":
     check: "Value".rightS.map2(10.rightS, (x: string, y: int) => x & $y) == "Value10".rightS
     check: "Error1".left(string).map2(10.rightS, (x: string, y: int) => x & $y) == "Error1".left(string)
     check: "Value".rightS.map2("Error2".left(int), (x: string, y: int) => x & $y) == "Error2".left(string)
+    check: 10.rightS.map2("Error2".left(int), (x: int, y: int) => x + y) == "Error2".left(int)
 
   test "Getters":
     check: r.getOrElse(0) == 10
@@ -70,3 +71,13 @@ suite "Either ADT":
     let ex2 = tryE f
     check: ex1.errorMsg == "Test Error"
     check: ex2.errorMsg == "Test Error"
+
+  test "Transformations":
+    let good = @[1, 2, 3, 4, 5].asList
+    let goodE = @[1, 2, 3, 4, 5].asList.map(x => x.rightS)
+    let badE = @[1, 2, 3, 4].asList.map(x => x.rightS) ++ @["Error".left(int)].asList
+
+    check: good.traverse((x: int) => x.rightS) == good.rightS
+    check: good.traverse((x: int) => (if x < 3: x.rightS else: "Error".left(type(x)))) == "Error".left(List[int])
+    check: goodE.sequence == good.rightS
+    check: badE.sequence == "Error".left(List[int])

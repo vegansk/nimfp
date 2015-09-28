@@ -1,4 +1,4 @@
-import future
+import future, list
 
 {.experimental.}
 
@@ -113,7 +113,7 @@ proc orElse*[E,A](e: Either[E,A], f: void -> Either[E,A]): Either[E,A] =
   ## Returns `e` if it contains right value, or the result of `f()`
   if e.isRight: e else: f()
 
-proc map2*[E,A,B,C](a: Either[E,A], b: Either[E,B], f: (A, B) -> C): Either[A,C] =
+proc map2*[E,A,B,C](a: Either[E,A], b: Either[E,B], f: (A, B) -> C): Either[E,C] =
   ## Maps 2 either values via `f`
   a.flatMap((a: A) => b.map((b: B) => f(a,b)))
 
@@ -125,3 +125,8 @@ proc tryS*[A](f: () -> A): EitherS[A] =
   ## Transforms exception to EitherS type
   (try: f().rightS except: getCurrentExceptionMsg().left(A))
     
+proc traverse*[E,A,B](xs: List[A], f: A -> Either[E,B]): Either[E,List[B]] =
+  xs.foldRight(Nil[B]().right(E), (x: A, xs: Either[E,List[B]]) => f(x).map2(xs, (y: B, ys: List[B]) => y ^^ ys))
+
+proc sequence*[E,A](xs: List[Either[E,A]]): Either[E,List[A]] =
+  xs.traverse((x: Either[E,A]) => x)
