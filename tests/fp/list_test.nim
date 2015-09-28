@@ -38,9 +38,7 @@ suite "List ADT":
 
   test "Misc functions":
     let lst = lc[$x | (x <- 'a'..'z'), string].asList
-    # Next two lines are so ugly because of https://github.com/nim-lang/Nim/issues/3313
-    let lstEq = lst.dup == lst
-    check: lstEq
+    check: lst.dup == lst
     check: lst.reverse == lc[$(('z'.int - x).char) | (x <- 0..('z'.int - 'a'.int)), string].asList
     check: asList(2, 4, 6, 8).forAll((x: int) => x mod 2 == 0) == true
     check: asList(2, 4, 6, 9).forAll((x: int) => x mod 2 == 0) == false
