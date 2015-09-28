@@ -56,3 +56,6 @@ suite "Option ADT":
     check: y.filter(!p) == n
     check: n.filter(p) == n
     check: n.filter(!p) == n
+
+  test "Misc":
+    check: ((x: int) => "Value " & $x).liftO()(1.some) == "Value 1".some

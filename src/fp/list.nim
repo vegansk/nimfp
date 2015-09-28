@@ -97,12 +97,14 @@ proc `++`*[T](xs, ys: List[T]): List[T] =
   xs.append(ys)
 
 proc foldLeft*[T,U](xs: List[T], z: U, f: (U, T) -> U): U =
+  ## Fold left operation
   case xs.isEmpty
   of true: z
   else: foldLeft(xs.tail, f(z, xs.head), f)
 
 # foldRight can be recursive, or realized via foldLeft.
 proc foldRight*[T,U](xs: List[T], z: U, f: (T, U) -> U): U =
+  ## Fold right operation. Can be defined via foldLeft (-d:foldRightViaLeft switch), or be recursive bu default.
   when defined(foldRightViaLeft):
     foldLeft[T, U -> U](xs, (b: U) => b, (g: U -> U, x: T) => ((b: U) => g(f(x, b))))(z)
   else:
@@ -111,11 +113,13 @@ proc foldRight*[T,U](xs: List[T], z: U, f: (T, U) -> U): U =
     else: f(xs.head, xs.tail.foldRight(z, f))
 
 proc drop*(xs: List, n: int): List =
+  ## Drops `n` first elements of the list
   case xs.isEmpty
   of true: xs
   else: (if n == 0: xs else: xs.tail.drop(n - 1))
 
 proc dropWhile*[T](xs: List[T], p: T -> bool): List[T] =
+  ## Drops elements of the list while `p` returns true.
   case xs.isEmpty
   of true: xs
   else: (if not xs.head.p(): xs else: xs.tail.dropWhile(p))

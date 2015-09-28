@@ -84,3 +84,8 @@ proc filter*[T](o: Option[T], p: T -> bool): Option[T] =
 proc map2*[T,U,V](t: Option[T], u: Option[U], f: (T, U) -> V): Option[V] =
   ## Returns the result of applying f to `t` and `u` value if they are both defined
   if t.isDefined and u.isDefined: f(t.value, u.value).some else: V.none
+
+proc liftO*[T,U](f: T -> U): proc(o: Option[T]): Option[U] =
+  ## Turns the function `f` of type `T -> U` into the function
+  ## of type `Option[T] -> Option[U]`
+  (o: Option[T]) => o.map((x: T) => f(x))

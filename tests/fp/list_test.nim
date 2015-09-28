@@ -16,11 +16,11 @@ suite "List ADT":
   test "Fold operations":
     let lst = lc[x|(x <- 1..4),int].asList
 
-    check: lst.foldLeft(0, (x: int, y: int) => x + y) == 10
-    check: lst.foldLeft(1, (x: int, y: int) => x * y) == 24
+    check: lst.foldLeft(0, (x, y) => x + y) == 10
+    check: lst.foldLeft(1, (x, y) => x * y) == 24
 
-    check: lst.foldRight(0, (x: int, y: int) => x + y) == 10
-    check: lst.foldRight(1, (x: int, y: int) => x * y) == 24
+    check: lst.foldRight(0, (x, y) => x + y) == 10
+    check: lst.foldRight(1, (x, y) => x * y) == 24
 
   test "Transformations":
 
