@@ -1,7 +1,5 @@
 import ../../src/fp/list, ../../src/fp/option, unittest, future
 
-{.warning[TypelessParam]: off.}
-
 suite "List ADT":
 
   test "Initialization and conversion":
@@ -23,6 +21,14 @@ suite "List ADT":
 
     check: lst.foldRight(0, (x: int, y: int) => x + y) == 10
     check: lst.foldRight(1, (x: int, y: int) => x * y) == 24
+
+  test "Transformations":
+
+    check: @[1, 2, 3].asList.traverse((x: int) => x.some) == @[1, 2, 3].asList.some
+    check: @[1, 2, 3].asList.traverse((x: int) => (if x > 2: x.none else: x.some)) == List[int].none
+
+    check: @[1.some, 2.some, 3.some].asList.sequence == @[1, 2, 3].asList.some
+    check: @[1.some, 2.none, 3.some].asList.sequence == List[int].none
 
   test "Drop operations":
     let lst = lc[x|(x <- 1..100),int].asList

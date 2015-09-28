@@ -22,6 +22,8 @@ suite "Option ADT":
     let f = (x: int) => $x
     check: 100500.some.map(f) == some("100500")
     check: 100500.none.map(f) == string.none
+    check: 100.some.map2("Test".some, (x, y) => y & $x) == "Test100".some
+    check: 100.some.map2("Test".none, (x, y) => y & $x) == "".none
 
   test "Flat map":
     let f = (x: int) => some(x * 2)

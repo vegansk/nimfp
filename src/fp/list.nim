@@ -187,3 +187,12 @@ proc hasSubsequence*[T](xs: List[T], ys: List[T]): bool =
   else:
     xs.tail.hasSubsequence(ys)
 
+proc traverse*[T,U](xs: List[T], f: T -> Option[U]): Option[List[U]] =
+  ## Transforms the list of `T` into the list of `U` f via `f` only if
+  ## all results of applying `f` are defined
+  xs.foldRight(Nil[U]().some, (x: T, ys: Option[List[U]]) => f(x).map2(ys, (y: U, ys: List[U]) => y ^^ ys))
+
+proc sequence*[T](xs: List[Option[T]]): Option[List[T]] =
+  ## Transforms the list of options into the option of list, which
+  ## is defined only if all of the source list options are defined
+  xs.traverse((x: Option[T]) => x)

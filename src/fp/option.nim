@@ -81,3 +81,6 @@ proc filter*[T](o: Option[T], p: T -> bool): Option[T] =
   ## to it's value is true
   if o.isDefined and p(o.value): o else: T.none
 
+proc map2*[T,U,V](t: Option[T], u: Option[U], f: (T, U) -> V): Option[V] =
+  ## Returns the result of applying f to `t` and `u` value if they are both defined
+  if t.isDefined and u.isDefined: f(t.value, u.value).some else: V.none
