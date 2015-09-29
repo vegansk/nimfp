@@ -103,40 +103,49 @@ proc `$`*[T](xs: Stream[T]): string =
   "Stream(" & xs.foldLeft(() => "", f) & ")"
 
 proc take*[T](xs: Stream[T], n: int): Stream[T] =
+  ## Takes `n` first elements of the stream
   if n == 0 or xs.k == snkEmpty:
     T.empty
   else:
     cons(xs.h, () => xs.t().take(n - 1))
 
 proc drop*[T](xs: Stream[T], n: int): Stream[T] =
+  ## Drops `n` first elements of the stream
   if n == 0 or xs.k == snkEmpty:
     xs
   else:
     xs.t().drop(n - 1)
 
 proc takeWhile*[T](xs: Stream[T], p: T -> bool): Stream[T] =
+  ## Takes elements while `p` is true
   xs.foldRight(() => T.empty(), (x: T, y: () -> Stream[T]) => (() => (if x.p: cons(() => x, y) else: T.empty)))
     
 proc dropWhile*[T](xs: Stream[T], p: T -> bool): Stream[T] =
+  ## Drops elements while `p` is true
   if xs.k == snkEmpty or not xs.h().p:
     xs
   else:
     xs.t().dropWhile(p)
     
 proc forAll*[T](xs: Stream[T], p: T -> bool): bool =
+  ## Checks if `p` returns true for all elements in stream
   case xs.k
   of snkEmpty: true
   else: p(xs.h()) and xs.t().forAll(p)
 
 proc map*[T,U](xs: Stream[T], f: T -> U): Stream[U] =
+  ## Maps one stream to another
   xs.foldRight(() => U.empty, (x: T, y: () -> Stream[U]) => (() => cons(() => f(x), y)))
 
 proc filter*[T](xs: Stream[T], p: T -> bool): Stream[T] =
+  ## Filters stream with predicate `p`
   xs.foldRight(() => T.empty, (x: T, y: () -> Stream[T]) => (() => (if x.p: cons(() => x, y) else: y())))
 
 proc append*[T](xs: Stream[T], x: () -> T): Stream[T] =
+  ## Appends `x` to the end of the stream
   xs.foldRight(() => cons(x, () => T.empty), (x: T, y: () -> Stream[T]) => (() => cons(() => x, y)))
 
 proc flatMap*[T,U](xs: Stream[T], f: T -> Stream[U]): Stream[U] =
+  ## Flat map operation for the stream
   xs.foldRight(() => U.empty, (x: T, y: () -> Stream[U]) => (() => f(x).foldRight(y, (x: U, y: () -> Stream[U]) => (() => cons(() => x, y)))))
 
