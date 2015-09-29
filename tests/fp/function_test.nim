@@ -1,4 +1,4 @@
-import ../../src/fp/functions, unittest, future
+import ../../src/fp/function, unittest, future
 
 suite "Functions":
 
