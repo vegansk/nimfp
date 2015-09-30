@@ -15,6 +15,12 @@ suite "Option ADT":
     check: s == Some("test")
     check: s != string.none
     check: n == None[int]()
+    check: "".some.notNil == "".some
+    check: nil.string.some.notNil == "".none
+    check: "".none.notNil == "".none
+    check: " 123 ".some.notEmpty == " 123 ".some
+    check: "  ".some.notEmpty == "".none
+    check: "123".none.notEmpty == "".none
 
   test "Map":
     let f = (x: int) => $x

@@ -1,4 +1,4 @@
-import future
+import future, strutils
 
 {.experimental.}
 
@@ -26,6 +26,20 @@ proc some*[T](value: T): Option[T] = Some(value)
 proc none*[T](value: T): Option[T] = None[T]()
 proc none*(T: typedesc): Option[T] = None[T]()
 
+proc notNil*[T](o: Option[T]): Option[T] =
+  ## Maps nil object to none
+  if o.kind == okSome and o.value == nil:
+    T.none
+  else:
+    o
+
+proc notEmpty*(o: Option[string]): Option[string] =
+  ## Maps empty string to none
+  if o.kind == okSome and o.value.strip == "":
+    "".none
+  else:
+    o
+
 proc `==`*[T](x, y: Option[T]): bool =
   if x.isDefined and y.isDefined:
     x.value == y.value
@@ -34,11 +48,11 @@ proc `==`*[T](x, y: Option[T]): bool =
   else:
     false
 
-proc isEmpty*(o: Option): bool =
+proc isEmpty*[T](o: Option[T]): bool =
   ## Checks if `o` is empty
   o.kind == okNone
 
-proc isDefined*(o: Option): bool =
+proc isDefined*[T](o: Option[T]): bool =
   ## Checks if `o` contains value
   not o.isEmpty
 
