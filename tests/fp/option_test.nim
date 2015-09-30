@@ -21,6 +21,7 @@ suite "Option ADT":
     check: " 123 ".some.notEmpty == " 123 ".some
     check: "  ".some.notEmpty == "".none
     check: "123".none.notEmpty == "".none
+    check: nil.string.some.notEmpty == "".none
 
   test "Map":
     let f = (x: int) => $x
