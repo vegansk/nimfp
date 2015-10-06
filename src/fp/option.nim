@@ -59,7 +59,8 @@ proc isDefined*[T](o: Option[T]): bool =
 proc `$`*[T](o: Option[T]): string =
   ## Returns string representation of `o`
   if o.isDefined:
-    "Some(" & $o.value & ")"
+   
+   "Some(" & $o.value & ")"
   else:
     "None"
   
@@ -103,3 +104,15 @@ proc liftO*[T,U](f: T -> U): proc(o: Option[T]): Option[U] =
   ## Turns the function `f` of type `T -> U` into the function
   ## of type `Option[T] -> Option[U]`
   (o: Option[T]) => o.map((x: T) => f(x))
+
+proc forEach*[T](xs: Option[T], f: T -> void): void =
+  ## Applies `f` to the options value if it's defined
+  if xs.isDefined:
+    f(xs.value)
+
+proc forAll*[T](xs: Option[T], f: T -> bool): bool =
+  ## Returns `f` applied to the option's value or true
+  if xs.isDefined:
+    f(xs.value)
+  else:
+    true

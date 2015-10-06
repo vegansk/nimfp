@@ -64,3 +64,13 @@ suite "Option ADT":
 
   test "Misc":
     check: ((x: int) => "Value " & $x).liftO()(1.some) == "Value 1".some
+    var b = true
+    false.some.forEach((v: bool) => (b = v))
+    check: b == false
+    true.some.forEach((v: bool) => (b = v))
+    check: b == true
+    false.none.forEach((v: bool) => (b = v))
+    check: b == true
+    check: true.some.forAll(v => v) == true
+    check: false.some.forAll(v => v) == false
+    check: false.none.forAll(v => v) == true
