@@ -53,21 +53,6 @@ proc `==`*[T](xs, ys: List[T]): bool =
   elif (xs.isEmpty, ys.isEmpty) == (false, false): xs.head == ys.head and xs.tail == ys.tail
   else: false
 
-proc asList*[T](xs: varargs[T]): List[T] =
-  ## Creates list from varargs
-  proc initListImpl(i: int, xs: openarray[T]): List[T] =
-    if i > high(xs):
-      Nil[T]()
-    else:
-      Cons(xs[i], initListImpl(i+1, xs))
-  initListImpl(0, xs)
-
-proc asSeq*[T](xs: List[T]): seq[T] =
-  ## Converts list to sequence
-  var s: seq[T] = @[]
-  xs.forEach((v: T) => (add(s, v)))
-  result = s
-
 type
   ListFormat = enum
     lfADT, lfSTD
@@ -200,3 +185,18 @@ proc sequence*[T](xs: List[Option[T]]): Option[List[T]] =
   ## Transforms the list of options into the option of list, which
   ## is defined only if all of the source list options are defined
   xs.traverse((x: Option[T]) => x)
+
+proc asList*[T](xs: varargs[T]): List[T] =
+  ## Creates list from varargs
+  proc initListImpl(i: int, xs: openarray[T]): List[T] =
+    if i > high(xs):
+      Nil[T]()
+    else:
+      Cons(xs[i], initListImpl(i+1, xs))
+  initListImpl(0, xs)
+
+proc asSeq*[T](xs: List[T]): seq[T] =
+  ## Converts list to sequence
+  var s: seq[T] = @[]
+  xs.forEach((v: T) => (add(s, v)))
+  result = s
