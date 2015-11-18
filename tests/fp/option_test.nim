@@ -30,6 +30,9 @@ suite "Option ADT":
     check: 100.some.map2("Test".some, (x, y) => y & $x) == "Test100".some
     check: 100.some.map2("Test".none, (x, y) => y & $x) == "".none
 
+    check: "x".some.map(v => "\"" & v & "\"").getOrElse("y") == "\"x\""
+    check: "x".none.map(v => "\"" & v & "\"").getOrElse("y") == "\"y\""
+
   test "Flat map":
     let f = (x: int) => some(x * 2)
     check: 2.some.flatMap(f) == some(4)
