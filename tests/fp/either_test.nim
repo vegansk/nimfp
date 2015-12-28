@@ -29,6 +29,9 @@ suite "Either ADT":
 
     check: $l1 == "Left(10)"
     check: $r1 == "Right(test)"
+
+    check: r1.get == "test"
+    expect(AssertionError): discard l1.get == "test"
     
   test "Map":
     check: r.map(x => x * 2) == 20.rightS

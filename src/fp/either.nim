@@ -97,6 +97,10 @@ proc flatMap*[E,A,B](e: Either[E,A], f: A -> Either[E,B]): Either[E,B] =
   ## Returns the result of applying `f` to the right value or returns left value
   if e.isLeft: e.lValue.left(B) else: f(e.rValue)
 
+proc get*[E,A](e: Either[E,A]): A =
+  doAssert(e.isRight, "Can't get Either's value")
+  e.rValue
+
 proc getOrElse*[E,A](e: Either[E,A], d: A): A =
   ## Return right value or `d`
   if e.isRight: e.rValue else: d
