@@ -23,6 +23,9 @@ suite "Option ADT":
     check: "123".none.notEmpty == "".none
     check: nil.string.some.notEmpty == "".none
 
+    check: s.get == "test"
+    expect(AssertionError): discard n.get == 10
+
   test "Map":
     let f = (x: int) => $x
     check: 100500.some.map(f) == some("100500")
@@ -31,7 +34,7 @@ suite "Option ADT":
     check: 100.some.map2("Test".none, (x, y) => y & $x) == "".none
 
     check: "x".some.map(v => "\"" & v & "\"").getOrElse("y") == "\"x\""
-    check: "x".none.map(v => "\"" & v & "\"").getOrElse("y") == "\"y\""
+    check: "x".none.map(v => "\"" & v & "\"").getOrElse("y") == "y"
 
   test "Flat map":
     let f = (x: int) => some(x * 2)

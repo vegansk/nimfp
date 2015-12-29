@@ -75,6 +75,11 @@ proc flatMap*[T,U](o: Option[T], f: T -> Option[U]): Option[U] =
   ## Returns the result of applying `f` if `o` is defined, or none
   if o.isDefined: f(o.value) else: U.none
 
+proc get*[T](o: Option[T]): T =
+  ## Returns option's value if defined, or fail
+  doAssert(o.isDefined, "Can't get Option's value")
+  o.value
+
 proc getOrElse*[T](o: Option[T], d: T): T =
   ## Returns option's value if defined, or `d`
   if o.isDefined: o.value else: d
