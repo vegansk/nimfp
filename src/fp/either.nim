@@ -122,13 +122,15 @@ proc map2*[E,A,B,C](a: Either[E,A], b: Either[E,B], f: (A, B) -> C): Either[E,C]
   ## Maps 2 either values via `f`
   a.flatMap((a: A) => b.map((b: B) => f(a,b)))
 
-proc tryE*[A](f: () -> A): EitherE[A] =
-  ## Transforms exception to EitherE type
-  (try: f().rightE except: getCurrentException().left(A))
+when compiles(getCurrentException()):
+  proc tryE*[A](f: () -> A): EitherE[A] =
+    ## Transforms exception to EitherE type
+    (try: f().rightE except: getCurrentException().left(A))
     
-proc tryS*[A](f: () -> A): EitherS[A] =
-  ## Transforms exception to EitherS type
-  (try: f().rightS except: getCurrentExceptionMsg().left(A))
+when compiles(getCurrentExceptionMsg()):
+  proc tryS*[A](f: () -> A): EitherS[A] =
+    ## Transforms exception to EitherS type
+    (try: f().rightS except: getCurrentExceptionMsg().left(A))
     
 proc traverse*[E,A,B](xs: List[A], f: A -> Either[E,B]): Either[E,List[B]] =
   xs.foldRight(Nil[B]().right(E), (x: A, xs: Either[E,List[B]]) => f(x).map2(xs, (y: B, ys: List[B]) => y ^^ ys))
