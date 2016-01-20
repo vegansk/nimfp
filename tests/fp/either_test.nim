@@ -75,6 +75,14 @@ suite "Either ADT":
     check: ex1.errorMsg == "Test Error"
     check: ex2.errorMsg == "Test Error"
 
+    let g1 = () => "Error 1".left(());
+    let g2 = () => (
+      result = ().rightE;
+      raise newException(Exception, "Error 2")
+    )
+    check: g1.flatTryS.errorMsg == "Error 1"
+    check: g2.flatTryE.errorMsg == "Error 2"
+
   test "Transformations":
     let good = @[1, 2, 3, 4, 5].asList
     let goodE = @[1, 2, 3, 4, 5].asList.map(x => x.rightS)

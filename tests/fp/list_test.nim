@@ -22,6 +22,8 @@ suite "List ADT":
     check: lst.foldRight(0, (x, y) => x + y) == 10
     check: lst.foldRight(1, (x, y) => x * y) == 24
 
+    check: Nil[int]().foldRight(100, (x, y) => x + y) == 100
+
   test "Transformations":
     check: @[1, 2, 3].asList.traverse((x: int) => x.some) == @[1, 2, 3].asList.some
     check: @[1, 2, 3].asList.traverse((x: int) => (if x > 2: x.none else: x.some)) == List[int].none
