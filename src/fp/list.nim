@@ -12,7 +12,7 @@ type
       discard
     of lnkCons:
       value: T
-      next: List[T] not nil
+      next: List[T]
 
 proc Cons*[T](head: T, tail: List[T]): List[T] =
   ## Constructs non empty list
@@ -24,8 +24,9 @@ proc Nil*[T](): List[T] =
 
 proc head*[T](xs: List[T]): T =
   ## Returns list's head
-  assert xs.kind == lnkCons
-  xs.value
+  case xs.kind
+  of lnkCons: return xs.value
+  else: doAssert(xs.kind == lnkCons)
 
 proc isEmpty*(xs: List): bool =
   ## Checks  if list is empty

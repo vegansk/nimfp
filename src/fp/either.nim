@@ -145,3 +145,8 @@ proc traverse*[E,A,B](xs: List[A], f: A -> Either[E,B]): Either[E,List[B]] =
 
 proc sequence*[E,A](xs: List[Either[E,A]]): Either[E,List[A]] =
   xs.traverse((x: Either[E,A]) => x)
+
+proc forEach*[E,A](a: Either[E,A], f: A -> void): void =
+  ## Applies `f` to the Either's value if it's right
+  if a.isRight:
+    f(a.get)
