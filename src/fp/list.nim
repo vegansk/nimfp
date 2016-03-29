@@ -166,6 +166,13 @@ proc zipWith*[T,U,V](xs: List[T], ys: List[U], f: (T,U) -> V): List[V] =
   else:
     Cons(f(xs.head, ys.head), zipWith(xs.tail, ys.tail, f))
 
+proc find*[T](xs: List[T], p: T -> bool): Option[T] =
+  ## Finds the first element that satisfies the predicate `p`
+  if xs.isEmpty:
+    T.none
+  else:
+    if p(xs.head): xs.head.some else: xs.tail.find(p)
+
 proc hasSubsequence*[T](xs: List[T], ys: List[T]): bool =
   ## Checks if `ys` in `xs`
   if ys.isEmpty:
