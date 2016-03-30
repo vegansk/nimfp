@@ -44,3 +44,9 @@ proc map*[K,V,K1,V1](m: Map[K,V], f: proc(item: MapItem[K,V]): MapItem[K1,V1]): 
 
 proc `==`*[K,V](m1, m2: Map[K,V]): bool =
   m1.asList.forAll((v: MapItem[K,V]) => m1.get(v.key) == m2.get(v.key))
+
+proc forEach*[K,V](m: Map[K,V], f: proc(item: MapItem[K,V]): void): void =
+  m.asList.forEach(f)
+
+proc forAll*[K,V](m: Map[K,V], p: proc(item: MapItem[K,V]): bool): bool =
+  m.asList.forAll(p)

@@ -16,3 +16,8 @@ suite "Map ADT":
     check: (m - 1).get(1) == "11".none
 
     check: m.map((i: MapItem[int, string]) => ($i.key, i.value.parseInt)) == [("3", 3), ("1", 1), ("2", 2)].asMap
+
+  test "Misc":
+    var x = 0
+    [(1, 100), (2, 200)].asMap.forEach((v: MapItem[int, int]) => (x += (x + v.key) * v.value))
+    check: x == 20500
