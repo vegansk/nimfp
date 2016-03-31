@@ -1,6 +1,6 @@
 [Package]
 name          = "nimfp"
-version       = "0.0.5"
+version       = "0.0.6"
 author        = "Anatoly Galiulin <galiulin.anatoly@gmail.com>"
 description   = "Nim functional programming library"
 license       = "MIT"
@@ -8,4 +8,4 @@ license       = "MIT"
 srcDir = "src"
 
 [Deps]
-Requires: "nim >= 0.13.0"
+Requires: "nim >= 0.13.1"

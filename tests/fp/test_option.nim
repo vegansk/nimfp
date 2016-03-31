@@ -2,7 +2,7 @@ import ../../src/fp/option, unittest, future
 
 suite "Option ADT":
 
-  test "Basic functions":
+  test "Option - Basic functions":
     let s = "test".some
     let n = int.none
 
@@ -26,7 +26,7 @@ suite "Option ADT":
     check: s.get == "test"
     expect(AssertionError): discard n.get == 10
 
-  test "Map":
+  test "Option - Map":
     let f = (x: int) => $x
     check: 100500.some.map(f) == some("100500")
     check: 100500.none.map(f) == string.none
@@ -36,12 +36,12 @@ suite "Option ADT":
     check: "x".some.map(v => "\"" & v & "\"").getOrElse("y") == "\"x\""
     check: "x".none.map(v => "\"" & v & "\"").getOrElse("y") == "y"
 
-  test "Flat map":
+  test "Option - Flat map":
     let f = (x: int) => some(x * 2)
     check: 2.some.flatMap(f) == some(4)
     check: 2.none.flatMap(f) == none(4)
 
-  test "Getters":
+  test "Option - Getters":
     check: 2.some.getOrElse(3) == 2
     check: 2.none.getOrElse(3) == 3
 
@@ -54,7 +54,7 @@ suite "Option ADT":
     check: 2.some.orElse(() => 4.some) == 2.some
     check: 2.none.orElse(() => 4.some) == 4.some
 
-  test "Filter":
+  test "Option - Filter":
     let x = "123".some
     let y = "12345".some
     let n = "".none
@@ -68,7 +68,7 @@ suite "Option ADT":
     check: n.filter(p) == n
     check: n.filter(!p) == n
 
-  test "Misc":
+  test "Option - Misc":
     check: ((x: int) => "Value " & $x).liftO()(1.some) == "Value 1".some
     var b = true
     false.some.forEach((v: bool) => (b = v))

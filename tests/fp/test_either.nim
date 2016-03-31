@@ -7,7 +7,7 @@ suite "Either ADT":
   let r = 10.rightS
   let l = "Error".left(int)
 
-  test "Basic functions":
+  test "Either - Basic functions":
     let l1 = Left[int,string](10)
     let l2 = 10.left("")
     let l3 = 10.left(string)
@@ -33,7 +33,7 @@ suite "Either ADT":
     check: r1.get == "test"
     expect(AssertionError): discard l1.get == "test"
     
-  test "Map":
+  test "Either - Map":
     check: r.map(x => x * 2) == 20.rightS
     check: l.map(x => x * 2) != 20.rightS
     check: l.map(x => x * 2) == l
@@ -46,7 +46,7 @@ suite "Either ADT":
     check: "Value".rightS.map2("Error2".left(int), (x: string, y: int) => x & $y) == "Error2".left(string)
     check: 10.rightS.map2("Error2".left(int), (x: int, y: int) => x + y) == "Error2".left(int)
 
-  test "Getters":
+  test "Either - Getters":
     check: r.getOrElse(0) == 10
     check: r.getOrElse(() => 0) == 10
 
@@ -59,7 +59,7 @@ suite "Either ADT":
     check: l.orElse(r) == r
     check: l.orElse(() => r) == r
     
-  test "Safe exceptions":
+  test "Either - Safe exceptions":
     check: tryE(() => 2/4) == 0.5.rightE
     check: tryS(() => 2/4) == 0.5.rightS
     {.floatChecks: on.}
@@ -83,7 +83,7 @@ suite "Either ADT":
     check: g1.flatTryS.errorMsg == "Error 1"
     check: g2.flatTryE.errorMsg == "Error 2"
 
-  test "Transformations":
+  test "Either - Transformations":
     let good = @[1, 2, 3, 4, 5].asList
     let goodE = @[1, 2, 3, 4, 5].asList.map(x => x.rightS)
     let badE = @[1, 2, 3, 4].asList.map(x => x.rightS) ++ @["Error".left(int)].asList
