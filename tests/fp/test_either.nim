@@ -35,8 +35,8 @@ suite "Either ADT":
 
     check: either.cond(true, 1, 0) == 1.right(int)
     check: either.cond(false, 1, 0) == 0.left(int)
-    check: either.condF(true, () => 1, 0) == 1.right(int)
-    check: either.condF(false, () => 1, 0) == 0.left(int)
+    check: either.condF(true, () => 1, () => 0) == 1.right(int)
+    check: either.condF(false, () => 1, () => 0) == 0.left(int)
 
     check: 1.some.asEither("nope") == 1.rightS
     check: 1.none.asEither("nope") == "nope".left(int)
