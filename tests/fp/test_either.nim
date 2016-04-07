@@ -32,6 +32,11 @@ suite "Either ADT":
 
     check: r1.get == "test"
     expect(AssertionError): discard l1.get == "test"
+
+    check: either.cond(true, 1, 0) == 1.right(int)
+    check: either.cond(false, 1, 0) == 0.left(int)
+    check: either.condF(true, () => 1, () => 0) == 1.right(int)
+    check: either.condF(false, () => 1, () => 0) == 0.left(int)
     
   test "Either - Map":
     check: r.map(x => x * 2) == 20.rightS

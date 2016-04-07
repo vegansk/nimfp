@@ -150,3 +150,12 @@ proc forEach*[E,A](a: Either[E,A], f: A -> void): void =
   ## Applies `f` to the Either's value if it's right
   if a.isRight:
     f(a.get)
+
+proc cond*[E,A](flag: bool, a: A, e: E): Either[E,A] =
+  ## If the condition is satisfied, return a else return e
+  if flag: a.right(E) else: e.left(A)
+
+proc condF*[E,A](flag: bool, a: () -> A, e: () -> E): Either[E,A] =
+  ## If the condition is satisfied, return a else return e
+  if flag: a().right(E) else: e().left(A)
+
