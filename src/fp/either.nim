@@ -1,4 +1,4 @@
-import future, list
+import future, list, option
 
 {.experimental.}
 
@@ -155,7 +155,10 @@ proc cond*[E,A](flag: bool, a: A, e: E): Either[E,A] =
   ## If the condition is satisfied, return a else return e
   if flag: a.right(E) else: e.left(A)
 
-proc condF*[E,A](flag: bool, a: () -> A, e: () -> E): Either[E,A] =
+proc condF*[E,A](flag: bool, a: () -> A, e: E): Either[E,A] =
   ## If the condition is satisfied, return a else return e
-  if flag: a().right(E) else: e().left(A)
+  if flag: a().right(E) else: e.left(A)
 
+proc asEither*[E,A](o: Option[A], e: E): Either[E,A] = 
+  ## Convert Option to Either type
+  condF(o.isDefined, () => o.get, e)
