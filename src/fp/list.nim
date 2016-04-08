@@ -166,6 +166,13 @@ proc zipWith*[T,U,V](xs: List[T], ys: List[U], f: (T,U) -> V): List[V] =
   else:
     Cons(f(xs.head, ys.head), zipWith(xs.tail, ys.tail, f))
 
+proc zip*[T,U](xs: List[T], ys: List[U]): List[(T,U)] =
+  xs.zipWith(ys, (x, y) => (x, y))
+
+# See https://github.com/nim-lang/Nim/issues/4061
+proc unzip*[T,U](xs: List[tuple[t: T, u: U]]): (List[T], List[U]) =
+  xs.foldRight((Nil[T](), Nil[U]()), (v: (T,U), r: (List[T], List[U])) => (v[0] ^^ r[0], v[1] ^^ r[1]))
+
 proc find*[T](xs: List[T], p: T -> bool): Option[T] =
   ## Finds the first element that satisfies the predicate `p`
   if xs.isEmpty:

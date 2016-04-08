@@ -43,6 +43,8 @@ suite "List ADT":
     check: lst.reverse == lc[$(('z'.int - x).char) | (x <- 0..('z'.int - 'a'.int)), string].asList
     check: asList(2, 4, 6, 8).forAll((x: int) => x mod 2 == 0) == true
     check: asList(2, 4, 6, 9).forAll((x: int) => x mod 2 == 0) == false
+    check: asList(1, 2, 3).zip(asList('a', 'b', 'c')) == asList((1, 'a'), (2, 'b'), (3, 'c'))
+    check: asList((1, 'a'), (2, 'b'), (3, 'c')).unzip == (asList(1, 2, 3), asList('a', 'b', 'c'))
 
   test "List - Iterator":
     let lst1 = [1, 2, 3, 4, 5].asList
