@@ -1,4 +1,4 @@
-import future, unittest, ../../src/fp/option, ../../src/fp/either, ../../src/fp/list, macros
+import future, unittest, ../../src/fp/option, ../../src/fp/either, ../../src/fp/list, ../../src/fp/forcomp, macros
 
 suite "ForComp":
   test "ForComp - Option - manual":
@@ -21,13 +21,77 @@ suite "ForComp":
         )
       )
     ) == 9.some
+
+  test "ForComp - Option - fc macro":
+    # for (x <- 1.some, y <- x + 3) yield y * 100
+    check: fc[(y*100).some | (
+      (x: int) <- 1.some,
+      (y: int) <- (x + 3).some
+    )] == 400.some
+    check: fc[(y*100).some | (
+      (x: int) <- int.none,
+      (y: int) <- (x + 3).some
+    )] == int.none
+
+  test "ForComp - Either - fc macro":
+    # for (x <- 1.rightS, y <- x + 3) yield y * 100
+    check: fc[(y*100).rightS | (
+      (x: int) <- 1.rightS,
+      (y: int) <- (x + 3).rightS
+    )] == 400.rightS
+    
+    check: fc[(y*100).rightS | (
+      (x: int) <- "Fail".left(int),
+      (y: int) <- (x + 3).rightS
+    )] == "Fail".left(int)
+    
+  test "ForComp - Option - act macro":
+    # for (x <- 1.some, y <- x + 3) yield y * 100
+    let res = act do:
+      (x: int) <- 1.some
+      (y: int) <- (x + 3).some
+      (y*100).some
+    check: res == 400.some
+    let res2 = act do:
+      (x: int) <- int.none
+      (y: int) <- (x + 3).some
+      (y*100).some
+    check: res2 == int.none
+    
+  test "ForComp - Either - act macro":
+    # for (x <- 1.rightS, y <- x + 3) yield y * 100
+    let res = act do:
+      (x: int) <- 1.rightS
+      (y: int) <- (x + 3).rightS
+      (y*100).rightS
+    check: res == 400.rightS
+    let res2 = act do:
+      (x: int) <- "Fail".left(int)
+      (y: int) <- (x + 3).rightS
+      (y*100).rightS 
+    check: res2 == "Fail".left(int)
+
+  test "ForComp - ``if`` example":
+    proc testFunc(i: int): Option[int] = act:
+      (x: int) <- (if i < 10: int.none else: i.some)
+      (x * 100).some
+
+    check: testFunc(1).isDefined == false
+    check: testFunc(20) == 2000.some
     
 #Syntax 1:
-dumpTree:
-  fc[(x + y + z).some | (
-    (x: int) <- 1.some,
-    (y: int) <- 2.some,
-    (_: int) <- doSomething(),
-    (z: int) <- (y * 3).some
-  )]
+# dumpTree:
+#   fc[(x + y + z).some | (
+#     (x: int) <- 1.some,
+#     (y: int) <- 2.some,
+#     (_: int) <- doSomething(),
+#     (z: int) <- (y * 3).some
+#   )]
 # Syntax 2:
+# dumpTree:
+#   let x = forc do:
+#     (x: int) <- 1.some
+#     (y: int) <- 2.some
+#     (_: int) <- doSomething()
+#     (z: int) <- (y * 3).some
+#     (x + y + z).some
