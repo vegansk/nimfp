@@ -5,6 +5,19 @@ type ForComprehension = distinct object
 var fc*: ForComprehension
 
 macro `[]`*(fc: ForComprehension, comp: expr): expr =
+  ## For comprehension with list comprehension like syntax.
+  ## Example:
+  ## 
+  ## .. code-block:: nim
+  ##   
+  ##   let res = fc[(y*100).some | (
+  ##     (x: int) <- 1.some,
+  ##     (y: int) <- (x + 3).some
+  ##   )]
+  ##   assert(res == 400.some)
+  ##
+  ## The only requirement for the user is to implement `foldMap`` function for the type
+  ## 
   expectLen(comp, 3)
   expectKind(comp, nnkInfix)
   expectKind(comp[0], nnkIdent)
@@ -24,6 +37,19 @@ macro `[]`*(fc: ForComprehension, comp: expr): expr =
       `cont`.flatMap(`lmb`)
 
 macro act*(comp: untyped): expr =
+  ## For comprehension with Haskell ``do notation`` like syntax.
+  ## Example:
+  ## 
+  ## .. code-block:: nim
+  ##   
+  ##   let res = act do:
+  ##     (x: int) <- 1.some,
+  ##     (y: int) <- (x + 3).some
+  ##     (y*100).some
+  ##   assert(res == 400.some)
+  ##
+  ## The only requirement for the user is to implement `foldMap`` function for the type
+  ## 
   expectKind comp, {nnkStmtList, nnkDo}
   let stmts = if comp.kind == nnkStmtList: comp else: comp.findChild(it.kind == nnkStmtList)
   expectMinLen(stmts, 2)
