@@ -105,6 +105,13 @@ proc map2*[T,U,V](t: Option[T], u: Option[U], f: (T, U) -> V): Option[V] =
   ## Returns the result of applying f to `t` and `u` value if they are both defined
   if t.isDefined and u.isDefined: f(t.value, u.value).some else: V.none
 
+proc zip*[T, U](t: Option[T], u: Option[U]): Option[(T, U)] =
+  ## Returns the tuple of `t` and `u` values if they are both defined
+  if t.isDefined and u.isDefined:
+    (t.get, u.get).some
+  else:
+    (T, U).none
+
 proc liftO*[T,U](f: T -> U): proc(o: Option[T]): Option[U] =
   ## Turns the function `f` of type `T -> U` into the function
   ## of type `Option[T] -> Option[U]`
@@ -121,3 +128,22 @@ proc forAll*[T](xs: Option[T], f: T -> bool): bool =
     f(xs.value)
   else:
     true
+
+proc traverse*[T, U](ts: seq[T], f: T -> Option[U]): Option[seq[U]] =
+  ## Returns list of values of application of `f` to elements in `ts`
+  ## if all the results are defined
+  ##
+  ## Example:
+  ## .. code-block:: nim
+  ##   traverse(@[1, 2, 3], (t: int) => (t - 1).some) == @[0, 1, 2].some
+  ##
+  ##   let f = (t: int) => (if (t < 3): t.some else: int.none)
+  ##   traverse(@[1, 2, 3], f) == seq[int].none
+  var acc = newSeq[U](ts.len)
+  for i, t in ts:
+    let mu = f(t)
+    if mu.isDefined:
+      acc[i] = mu.get
+    else:
+      return seq[U].none
+  return acc.some
