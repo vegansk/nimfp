@@ -68,6 +68,15 @@ suite "Option ADT":
     check: n.filter(p) == n
     check: n.filter(!p) == n
 
+  test "Option - Traverse":
+    let a = @[1, 2, 3]
+
+    let f1 = (t: int) => (t - 1).some
+    check: traverse(a, f1) == @[0, 1, 2].some
+
+    let f2 = (t: int) => (if (t < 3): t.some else: int.none)
+    check: traverse(a, f2) == seq[int].none
+
   test "Option - Misc":
     check: ((x: int) => "Value " & $x).liftO()(1.some) == "Value 1".some
     var b = true
@@ -80,3 +89,6 @@ suite "Option ADT":
     check: true.some.forAll(v => v) == true
     check: false.some.forAll(v => v) == false
     check: false.none.forAll(v => v) == true
+
+    check: 1.some.zip("foo".some) == (1, "foo").some
+    check: 1.some.zip(string.none) == (int, string).none
