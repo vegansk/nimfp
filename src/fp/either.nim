@@ -102,6 +102,11 @@ proc get*[E,A](e: Either[E,A]): A =
   doAssert(e.isRight, "Can't get Either's value")
   e.rValue
 
+proc getLeft*[E,A](e: Either[E,A]): E =
+  ## Returns either's value if it is left, or fail
+  doAssert(e.isLeft, "Can't get Either's left value")
+  e.lValue
+
 proc getOrElse*[E,A](e: Either[E,A], d: A): A =
   ## Return right value or `d`
   if e.isRight: e.rValue else: d

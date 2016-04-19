@@ -1,4 +1,4 @@
-version       = "0.0.8"
+version       = "0.0.9"
 author        = "Anatoly Galiulin <galiulin.anatoly@gmail.com>"
 description   = "Nim functional programming library"
 license       = "MIT"
