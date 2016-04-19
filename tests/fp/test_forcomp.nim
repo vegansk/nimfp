@@ -78,6 +78,17 @@ suite "ForComp":
 
     check: testFunc(1).isDefined == false
     check: testFunc(20) == 2000.some
+
+  test "ForComp - crash test":
+    proc io1(): EitherS[int] =
+      1.rightS
+    proc io2(i: int): EitherS[string] =
+      ("From action 2: " & $i).rightS
+    proc io3(i: int, s: string): EitherS[string] =
+      ("Got " & $i & " from aсtion 1 and '" & s & "' from action 2").rightS
+    let res = fc[io3(i, s) | ((i: int) <- io1(), (_: tuple[]) <- (echo("i = ", i); ().rightS), (s: string) <- io2(i), (_: tuple[]) <- (echo("s = ", s); ().rightS))]
+
+    echo res
     
 #Syntax 1:
 # dumpTree:
