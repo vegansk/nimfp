@@ -22,3 +22,9 @@ suite "Map ADT":
     var x = 0
     [(1, 100), (2, 200)].asMap.forEach((v: (int, int)) => (x += (x + v.key) * v.value))
     check: x == 20500
+
+  test "Map - Equality":
+    check: asMap((1, 2), (3, 4)) == asMap((3, 4), (1, 2))
+    check: asMap((1, 2), (3, 4)) != asMap((1, 2))
+    check: asMap((1, 2)) != asMap((1, 2), (3, 4))
+    check: asMap((1, 2), (3, 4)) != asMap((3, 4), (1, 5))

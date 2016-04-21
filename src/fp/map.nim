@@ -42,7 +42,8 @@ proc map*[K,V,K1,V1](m: Map[K,V], f: proc(item: (K,V)): (K1,V1)): Map[K1,V1] =
   m.asList.map(f).asMap
 
 proc `==`*[K,V](m1, m2: Map[K,V]): bool =
-  m1.asList.forAll((v: (K,V)) => m1.get(v.key) == m2.get(v.key))
+  m1.asList.forAll((v: (K,V)) => m1.get(v.key) == m2.get(v.key)) and
+    m2.asList.forAll((v: (K, V)) => m1.get(v.key).isDefined)
 
 proc forEach*[K,V](m: Map[K,V], f: proc(item: (K,V)): void): void =
   m.asList.forEach(f)
