@@ -79,6 +79,13 @@ suite "ForComp":
     check: testFunc(1).isDefined == false
     check: testFunc(20) == 2000.some
 
+  test "ForComp - lists":
+    let res = act do:
+      (x: int) <- asList(1,2,3)
+      (y: int) <- asList(1,2,3)
+      asList((x, y))
+    echo res
+
   test "ForComp - crash test":
     proc io1(): EitherS[int] =
       1.rightS
@@ -89,6 +96,7 @@ suite "ForComp":
     let res = fc[io3(i, s) | ((i: int) <- io1(), (_: tuple[]) <- (echo("i = ", i); ().rightS), (s: string) <- io2(i), (_: tuple[]) <- (echo("s = ", s); ().rightS))]
 
     echo res
+
 
 #Syntax 1:
 # dumpTree:
