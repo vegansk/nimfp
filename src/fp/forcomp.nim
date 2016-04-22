@@ -33,6 +33,10 @@ macro `[]`*(fc: ForComprehension, comp: expr): expr =
     expectKind(x[1][0][0], nnkIdent)
     let cont = x[2]
     let lmb = newProc(params = @[ident"auto", newIdentDefs(x[1][0][0], x[1][0][1])], body = result, procType = nnkLambda)
+    let p = newNimNode(nnkPragma)
+    p.add(ident"closure")
+    lmb[4] = p
+    echo lmb.treeRepr
     result = quote do:
       `cont`.flatMap(`lmb`)
 

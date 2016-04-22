@@ -89,7 +89,7 @@ suite "ForComp":
     let res = fc[io3(i, s) | ((i: int) <- io1(), (_: tuple[]) <- (echo("i = ", i); ().rightS), (s: string) <- io2(i), (_: tuple[]) <- (echo("s = ", s); ().rightS))]
 
     echo res
-    
+
 #Syntax 1:
 # dumpTree:
 #   fc[(x + y + z).some | (
