@@ -26,13 +26,23 @@ macro `[]`*(fc: ForComprehension, comp: expr): expr =
   result = comp[1]
 
   for i in countdown(comp[2].len-1, 0):
-    let x = comp[2][i]
+    var x = comp[2][i]
+    if x.kind != nnkInfix or $x[0] != "<-":
+      x = newNimNode(nnkInfix).add(ident"<-").add(ident"_").add(x)
     expectLen(x, 3)
-    expectLen(x[1], 1)
-    expectMinLen(x[1][0], 2)
-    expectKind(x[1][0][0], nnkIdent)
+    var iDef: NimNode
+    var iType: NimNode
+    if x[1].kind == nnkIdent:
+      iDef = x[1]
+      iType = newCall(ident"elemType", x[2])
+    else:
+      expectLen(x[1], 1)
+      expectMinLen(x[1][0], 2)
+      expectKind(x[1][0][0], nnkIdent)
+      iDef = x[1][0][0]
+      iType = x[1][0][1]
     let cont = x[2]
-    let lmb = newProc(params = @[ident"auto", newIdentDefs(x[1][0][0], x[1][0][1])], body = result, procType = nnkLambda)
+    let lmb = newProc(params = @[ident"auto", newIdentDefs(iDef, iType)], body = result, procType = nnkLambda)
     let p = newNimNode(nnkPragma)
     p.add(ident"closure")
     lmb[4] = p

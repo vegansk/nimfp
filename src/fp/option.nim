@@ -147,3 +147,8 @@ proc traverse*[T, U](ts: seq[T], f: T -> Option[U]): Option[seq[U]] =
     else:
       return seq[U].none
   return acc.some
+
+
+template elemType*(v: Option): typedesc =
+  ## Part of ``do notation`` contract
+  type(v.get)

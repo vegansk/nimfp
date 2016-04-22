@@ -1,4 +1,4 @@
-import future, unittest, ../../src/fp/option, ../../src/fp/either, ../../src/fp/list, ../../src/fp/forcomp, macros
+import future, unittest, ../../src/fp/option, ../../src/fp/either, ../../src/fp/list, ../../src/fp/forcomp, macros, ../../src/fp/stream
 
 suite "ForComp":
   test "ForComp - Option - manual":
@@ -86,6 +86,20 @@ suite "ForComp":
       asList((x, y))
     echo res
 
+  test "ForComp - type inference":
+    let res = act do:
+      x <- asList(1,2,3)
+      y <- asList("a", "b", "c")
+      asList(y & $x)
+    echo res
+
+    let resO = act do:
+      x <- 1.some
+      y <- (x * 2).some
+      ().none
+      ("res = " & $y).some
+    echo resO
+
   test "ForComp - crash test":
     proc io1(): EitherS[int] =
       1.rightS
@@ -93,10 +107,19 @@ suite "ForComp":
       ("From action 2: " & $i).rightS
     proc io3(i: int, s: string): EitherS[string] =
       ("Got " & $i & " from aсtion 1 and '" & s & "' from action 2").rightS
-    let res = fc[io3(i, s) | ((i: int) <- io1(), (_: tuple[]) <- (echo("i = ", i); ().rightS), (s: string) <- io2(i), (_: tuple[]) <- (echo("s = ", s); ().rightS))]
+    let res = fc[io3(i, s) | (i <- io1(), (echo("i = ", i); ().rightS), s <- io2(i), (echo("s = ", s); ().rightS))]
 
     echo res
 
+  test "ForComp - streams test":
+    proc intStream(fr: int): Stream[int] =
+      cons(() => fr, () => intStream(fr + 1))
+
+    let res = act do:
+      x <- intStream(1)
+      asStream("S" & $x)
+
+    echo res.take(10)
 
 #Syntax 1:
 # dumpTree:

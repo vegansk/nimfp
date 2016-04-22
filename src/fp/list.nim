@@ -215,3 +215,7 @@ proc asSeq*[T](xs: List[T]): seq[T] =
   var s: seq[T] = @[]
   xs.forEach((v: T) => (add(s, v)))
   result = s
+
+template elemType*(v: List): typedesc =
+  ## Part of ``do notation`` contract
+  type(v.head)

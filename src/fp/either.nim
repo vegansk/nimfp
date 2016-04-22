@@ -171,3 +171,7 @@ proc asEither*[E,A](o: Option[A], e: E): Either[E,A] =
 proc asEitherF*[E,A](o: Option[A], e: () -> E): Either[E,A] = 
   ## Convert Option to Either type
   condF(o.isDefined, () => o.get, e())
+
+template elemType*(v: Either): typedesc =
+  ## Part of ``do notation`` contract
+  type(v.get)

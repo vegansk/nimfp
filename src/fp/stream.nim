@@ -149,3 +149,6 @@ proc flatMap*[T,U](xs: Stream[T], f: T -> Stream[U]): Stream[U] =
   ## Flat map operation for the stream
   xs.foldRight(() => U.empty, (x: T, y: () -> Stream[U]) => (() => f(x).foldRight(y, (x: U, y: () -> Stream[U]) => (() => cons(() => x, y)))))
 
+template elemType*(v: Stream): typedesc =
+  ## Part of ``do notation`` contract
+  type(v.head)
