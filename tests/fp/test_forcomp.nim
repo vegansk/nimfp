@@ -121,6 +121,23 @@ suite "ForComp":
 
     echo res.take(10)
 
+  test "ForComp - custom types":
+    proc flatMap[T](s: seq[T], f: T -> seq[T]): seq[T] =
+      result = newSeq[T]()
+      for v in s:
+        result.add(f(v))
+    template elemType(s: seq): typedesc =
+      type(s[0])
+
+    let res = act do:
+      x <- @[1, 2, 3]
+      y <- @[100, 200, 300]
+      z <- @[5, 7]
+      @[x * y + z]
+
+    echo res
+    
+
 #Syntax 1:
 # dumpTree:
 #   fc[(x + y + z).some | (
