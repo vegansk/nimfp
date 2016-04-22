@@ -36,7 +36,6 @@ macro `[]`*(fc: ForComprehension, comp: expr): expr =
     let p = newNimNode(nnkPragma)
     p.add(ident"closure")
     lmb[4] = p
-    echo lmb.treeRepr
     result = quote do:
       `cont`.flatMap(`lmb`)
 
