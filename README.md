@@ -1,6 +1,6 @@
 # nimfp [![nimble](https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble.png)](https://github.com/yglukhov/nimble-tag)
 
-[![Build Status]https://travis-ci.org/vegansk/nimfp.svg?branch=master)](https://travis-ci.org/vegansk/nimfp)
+[![Build Status](https://travis-ci.org/vegansk/nimfp.svg?branch=master)](https://travis-ci.org/vegansk/nimfp)
 
 Nim functional programming library. Includes:
 
