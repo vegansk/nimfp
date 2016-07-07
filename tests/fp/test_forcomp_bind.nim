@@ -6,7 +6,7 @@ from fp.forcomp import act
 ## instantiation context (matters for templates and generics)
 
 suite "Symbol binding in act":
-  test "act should not require fc in instantiation context":
+  test "ForComp - act should not require additional imports":
     let success = compiles(
       act do:
        (x: int) <- 1.some

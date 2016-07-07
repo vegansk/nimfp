@@ -53,8 +53,8 @@ macro act*(comp: untyped): expr =
   expectKind comp, {nnkStmtList, nnkDo}
   let stmts = if comp.kind == nnkStmtList: comp else: comp.findChild(it.kind == nnkStmtList)
   expectMinLen(stmts, 2)
-  result = newNimNode(nnkBracketExpr)
-  result.add(ident"fc")
+  result = newCall(bindSym"[]")
+  result.add(bindSym"fc")
   block:
     let op = newNimNode(nnkInfix)
     result.add(op)
