@@ -22,11 +22,26 @@ suite "List ADT":
     check: lst.foldRight(0, (x, y) => x + y) == 10
     check: lst.foldRight(1, (x, y) => x * y) == 24
 
+    check: lst.foldRightLazy(() => 0, (x: int, y: () -> int) => x + y()) == 10
+    check: lst.foldRightLazy(() => 1, (x: int, y: () -> int) => x * y()) == 24
+
+    proc badAcc(): int = raise newException(Exception, "Not lazy!")
+    check: lst.foldRightLazy(badAcc, (x: int, y: () -> int) => x) == 1
+
     check: Nil[int]().foldRight(100, (x, y) => x + y) == 100
 
   test "List - Transformations":
     check: @[1, 2, 3].asList.traverse((x: int) => x.some) == @[1, 2, 3].asList.some
     check: @[1, 2, 3].asList.traverse((x: int) => (if x > 2: x.none else: x.some)) == List[int].none
+
+    # traverse should not call f after the first None
+    var cnt = 0
+    let res = asList(1, 2, 3).traverse do (x: int) -> auto:
+      inc cnt
+      if x != 2: x.some
+      else: int.none
+    check: res == List[int].none
+    check: cnt == 2
 
     check: @[1.some, 2.some, 3.some].asList.sequence == @[1, 2, 3].asList.some
     check: @[1.some, 2.none, 3.some].asList.sequence == List[int].none

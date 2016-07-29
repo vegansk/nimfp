@@ -98,6 +98,11 @@ proc foldRight*[T,U](xs: List[T], z: U, f: (T, U) -> U): U =
     of true: z
     else: f(xs.head, xs.tail.foldRight(z, f))
 
+proc foldRightLazy*[T, U](xs: List[T], z: () -> U, f: (T, () -> U) -> U): U =
+  ## Right fold over lists. Lazy in accumulator - allows for early termination.
+  if xs.isEmpty: z()
+  else: f(xs.head, () => xs.tail.foldRightLazy(z, f))
+
 proc drop*(xs: List, n: int): List =
   ## Drops `n` first elements of the list
   case xs.isEmpty
@@ -193,8 +198,13 @@ proc hasSubsequence*[T](xs: List[T], ys: List[T]): bool =
 
 proc traverse*[T,U](xs: List[T], f: T -> Option[U]): Option[List[U]] =
   ## Transforms the list of `T` into the list of `U` f via `f` only if
-  ## all results of applying `f` are defined
-  xs.foldRight(Nil[U]().some, (x: T, ys: Option[List[U]]) => f(x).map2(ys, (y: U, ys: List[U]) => y ^^ ys))
+  ## all results of applying `f` are defined.
+  ## Doesnt execute `f` for elements after the first `None` is encountered.
+  xs.foldRightLazy(
+    () => Nil[U]().some,
+    (x: T, ys: () -> Option[List[U]]) =>
+      f(x).map2Lazy(ys, `^^`[U])
+  )
 
 proc sequence*[T](xs: List[Option[T]]): Option[List[T]] =
   ## Transforms the list of options into the option of list, which

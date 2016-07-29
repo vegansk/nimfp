@@ -54,6 +54,14 @@ suite "Either ADT":
     check: "Value".rightS.map2("Error2".left(int), (x: string, y: int) => x & $y) == "Error2".left(string)
     check: 10.rightS.map2("Error2".left(int), (x: int, y: int) => x + y) == "Error2".left(int)
 
+    check: "Value".rightS.map2Lazy(() => 10.rightS, (x: string, y: int) => x & $y) == "Value10".rightS
+    check: "Error1".left(string).map2Lazy(() => 10.rightS, (x: string, y: int) => x & $y) == "Error1".left(string)
+    check: "Value".rightS.map2Lazy(() => "Error2".left(int), (x: string, y: int) => x & $y) == "Error2".left(string)
+    check: 10.rightS.map2Lazy(() => "Error2".left(int), (x: int, y: int) => x + y) == "Error2".left(int)
+
+    proc badEither(): EitherS[int] = raise newException(Exception, "Not lazy!")
+    check: "err".left(string).map2Lazy(badEither, (x, y) => x & $y) == "err".left(string)
+
   test "Either - Getters":
     check: r.getOrElse(0) == 10
     check: r.getOrElse(() => 0) == 10
@@ -100,3 +108,12 @@ suite "Either ADT":
     check: good.traverse((x: int) => (if x < 3: x.rightS else: "Error".left(type(x)))) == "Error".left(List[int])
     check: goodE.sequence == good.rightS
     check: badE.sequence == "Error".left(List[int])
+
+    # traverse should not call f after the first Left
+    var cnt = 0
+    let res = asList(1, 2, 3).traverse do (x: int) -> auto:
+      inc cnt
+      if x != 2: x.rightS
+      else: "err".left(int)
+    check: res == "err".left(List[int])
+    check: cnt == 2

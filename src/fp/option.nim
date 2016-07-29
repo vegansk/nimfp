@@ -105,6 +105,14 @@ proc map2*[T,U,V](t: Option[T], u: Option[U], f: (T, U) -> V): Option[V] =
   ## Returns the result of applying f to `t` and `u` value if they are both defined
   if t.isDefined and u.isDefined: f(t.value, u.value).some else: V.none
 
+proc map2Lazy*[A, B, C](
+  ma: Option[A],
+  mb: () -> Option[B],
+  f: (A, B) -> C
+): Option[C] =
+  ## Maps 2 `Option` values via `f`. Lazy in second argument.
+  ma.flatMap((a: A) => mb().map((b: B) => f(a, b)))
+
 proc zip*[T, U](t: Option[T], u: Option[U]): Option[(T, U)] =
   ## Returns the tuple of `t` and `u` values if they are both defined
   if t.isDefined and u.isDefined:

@@ -124,8 +124,16 @@ proc orElse*[E,A](e: Either[E,A], f: void -> Either[E,A]): Either[E,A] =
   if e.isRight: e else: f()
 
 proc map2*[E,A,B,C](a: Either[E,A], b: Either[E,B], f: (A, B) -> C): Either[E,C] =
-  ## Maps 2 either values via `f`
+  ## Maps 2 `Either` values via `f`
   a.flatMap((a: A) => b.map((b: B) => f(a,b)))
+
+proc map2Lazy*[A, B, C, E](
+  ma: Either[E, A],
+  mb: () -> Either[E, B],
+  f: (A, B) -> C
+): Either[E, C] =
+  ## Maps 2 `Either` values via `f`. Lazy in second argument.
+  ma.flatMap((a: A) => mb().map((b: B) => f(a, b)))
 
 when compiles(getCurrentException()):
   proc tryE*[A](f: () -> A): EitherE[A] =
@@ -145,8 +153,15 @@ when compiles(getCurrentExceptionMsg()):
     ## Transforms exception to EitherS type
     (try: f() except: getCurrentExceptionMsg().left(A))
     
-proc traverse*[E,A,B](xs: List[A], f: A -> Either[E,B]): Either[E,List[B]] =
-  xs.foldRight(Nil[B]().right(E), (x: A, xs: Either[E,List[B]]) => f(x).map2(xs, (y: B, ys: List[B]) => y ^^ ys))
+proc traverse*[T, E, U](xs: List[T], f: T -> Either[E, U]): Either[E, List[U]] =
+  ## Transforms the list of `T` into the list of `U` f via `f` only if
+  ## all results of applying `f` are `Right`.
+  ## Doesnt execute `f` for elements after the first `Left` is encountered.
+  xs.foldRightLazy(
+    () => Nil[U]().right(E),
+    (x: T, ys: () -> Either[E, List[U]]) =>
+      f(x).map2Lazy(ys, (y: U, ys: List[U]) => y ^^ ys)
+  )
 
 proc sequence*[E,A](xs: List[Either[E,A]]): Either[E,List[A]] =
   xs.traverse((x: Either[E,A]) => x)
