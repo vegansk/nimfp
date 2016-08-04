@@ -66,14 +66,14 @@ suite "Option ADT":
     let y = "12345".some
     let n = "".none
     let p = (x: string) => x.len > 3
-    proc `!`[T](f: T -> bool): T -> bool = (x: T) =>  not f(x)
+    let notP = (x: string) => not p(x)
 
     check: x.filter(p) == n
-    check: x.filter(!p) == x
+    check: x.filter(notP) == x
     check: y.filter(p) == y
-    check: y.filter(!p) == n
+    check: y.filter(notP) == n
     check: n.filter(p) == n
-    check: n.filter(!p) == n
+    check: n.filter(notP) == n
 
   test "Option - Traverse":
     let a = @[1, 2, 3]
