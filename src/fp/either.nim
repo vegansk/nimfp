@@ -176,6 +176,15 @@ proc traverse*[T, E, U](xs: List[T], f: T -> Either[E, U]): Either[E, List[U]] =
 proc sequence*[E,A](xs: List[Either[E,A]]): Either[E,List[A]] =
   xs.traverse((x: Either[E,A]) => x)
 
+proc traverse*[E, A, B](
+  opt: Option[A],
+  f: A -> Either[E, B]
+): Either[E, Option[B]] =
+  if opt.isEmpty:
+    B.none.rightS
+  else:
+    f(opt.get).map((b: B) => b.some)
+
 proc forEach*[E,A](a: Either[E,A], f: A -> void): void =
   ## Applies `f` to the Either's value if it's right
   if a.isRight:

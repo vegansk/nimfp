@@ -118,6 +118,14 @@ suite "Either ADT":
     check: res == "err".left(List[int])
     check: cnt == 2
 
+    # Traverse with Option
+    proc leftFunc(i: int): EitherS[bool] = "foo".left(bool)
+    proc rightFunc(i: int): EitherS[bool] = true.rightS
+    check: int.none.traverse(rightFunc) == bool.none.rightS
+    check: int.none.traverse(leftFunc) == bool.none.rightS
+    check: 1.some.traverse(rightFunc) == true.some.rightS
+    check: 1.some.traverse(leftFunc) == "foo".left(Option[bool])
+
   test "Either - traverse with List should allow to properly infer gcsafe":
     proc f(i: int): auto = i.rightS
 
