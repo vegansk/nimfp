@@ -34,11 +34,11 @@ suite "Option ADT":
     check: 100.some.map2("Test".some, (x, y) => y & $x) == "Test100".some
     check: 100.some.map2("Test".none, (x, y) => y & $x) == "".none
 
-    check: 100.some.map2Lazy(() => "Test".some, (x, y) => y & $x) == "Test100".some
-    check: 100.some.map2Lazy(() => "Test".none, (x, y) => y & $x) == "".none
+    check: 100.some.map2F(() => "Test".some, (x, y) => y & $x) == "Test100".some
+    check: 100.some.map2F(() => "Test".none, (x, y) => y & $x) == "".none
 
     proc badOption(): Option[int] = raise newException(Exception, "Not lazy!")
-    check: int.none.map2Lazy(badOption, (x, y) => $x) == string.none
+    check: int.none.map2F(badOption, (x, y) => $x) == string.none
 
     check: "x".some.map(v => "\"" & v & "\"").getOrElse("y") == "\"x\""
     check: "x".none.map(v => "\"" & v & "\"").getOrElse("y") == "y"

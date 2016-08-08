@@ -22,11 +22,11 @@ suite "List ADT":
     check: lst.foldRight(0, (x, y) => x + y) == 10
     check: lst.foldRight(1, (x, y) => x * y) == 24
 
-    check: lst.foldRightLazy(() => 0, (x: int, y: () -> int) => x + y()) == 10
-    check: lst.foldRightLazy(() => 1, (x: int, y: () -> int) => x * y()) == 24
+    check: lst.foldRightF(() => 0, (x: int, y: () -> int) => x + y()) == 10
+    check: lst.foldRightF(() => 1, (x: int, y: () -> int) => x * y()) == 24
 
     proc badAcc(): int = raise newException(Exception, "Not lazy!")
-    check: lst.foldRightLazy(badAcc, (x: int, y: () -> int) => x) == 1
+    check: lst.foldRightF(badAcc, (x: int, y: () -> int) => x) == 1
 
     check: Nil[int]().foldRight(100, (x, y) => x + y) == 100
 

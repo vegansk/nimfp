@@ -98,10 +98,10 @@ proc foldRight*[T,U](xs: List[T], z: U, f: (T, U) -> U): U =
     of true: z
     else: f(xs.head, xs.tail.foldRight(z, f))
 
-proc foldRightLazy*[T, U](xs: List[T], z: () -> U, f: (T, () -> U) -> U): U =
+proc foldRightF*[T, U](xs: List[T], z: () -> U, f: (T, () -> U) -> U): U =
   ## Right fold over lists. Lazy in accumulator - allows for early termination.
   if xs.isEmpty: z()
-  else: f(xs.head, () => xs.tail.foldRightLazy(z, f))
+  else: f(xs.head, () => xs.tail.foldRightF(z, f))
 
 proc drop*(xs: List, n: int): List =
   ## Drops `n` first elements of the list
@@ -201,8 +201,7 @@ proc traverse*[T,U](xs: List[T], f: T -> Option[U]): Option[List[U]] =
   ## all results of applying `f` are defined.
   ## Doesnt execute `f` for elements after the first `None` is encountered.
 
-  
-  # Implementation with foldRightLazy breaks semcheck when inferring
+  # Implementation with foldRightF breaks semcheck when inferring
   # gcsafe. So we have to keep this basic.
   # Also, since tail calls are not guaranteed, we use a loop instead
   # of recursion.

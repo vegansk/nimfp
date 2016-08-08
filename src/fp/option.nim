@@ -105,7 +105,7 @@ proc map2*[T,U,V](t: Option[T], u: Option[U], f: (T, U) -> V): Option[V] =
   ## Returns the result of applying f to `t` and `u` value if they are both defined
   if t.isDefined and u.isDefined: f(t.value, u.value).some else: V.none
 
-proc map2Lazy*[A, B, C](
+proc map2F*[A, B, C](
   ma: Option[A],
   mb: () -> Option[B],
   f: (A, B) -> C

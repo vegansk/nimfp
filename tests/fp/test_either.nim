@@ -54,13 +54,13 @@ suite "Either ADT":
     check: "Value".rightS.map2("Error2".left(int), (x: string, y: int) => x & $y) == "Error2".left(string)
     check: 10.rightS.map2("Error2".left(int), (x: int, y: int) => x + y) == "Error2".left(int)
 
-    check: "Value".rightS.map2Lazy(() => 10.rightS, (x: string, y: int) => x & $y) == "Value10".rightS
-    check: "Error1".left(string).map2Lazy(() => 10.rightS, (x: string, y: int) => x & $y) == "Error1".left(string)
-    check: "Value".rightS.map2Lazy(() => "Error2".left(int), (x: string, y: int) => x & $y) == "Error2".left(string)
-    check: 10.rightS.map2Lazy(() => "Error2".left(int), (x: int, y: int) => x + y) == "Error2".left(int)
+    check: "Value".rightS.map2F(() => 10.rightS, (x: string, y: int) => x & $y) == "Value10".rightS
+    check: "Error1".left(string).map2F(() => 10.rightS, (x: string, y: int) => x & $y) == "Error1".left(string)
+    check: "Value".rightS.map2F(() => "Error2".left(int), (x: string, y: int) => x & $y) == "Error2".left(string)
+    check: 10.rightS.map2F(() => "Error2".left(int), (x: int, y: int) => x + y) == "Error2".left(int)
 
     proc badEither(): EitherS[int] = raise newException(Exception, "Not lazy!")
-    check: "err".left(string).map2Lazy(badEither, (x, y) => x & $y) == "err".left(string)
+    check: "err".left(string).map2F(badEither, (x, y) => x & $y) == "err".left(string)
 
   test "Either - Getters":
     check: r.getOrElse(0) == 10

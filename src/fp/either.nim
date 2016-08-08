@@ -127,7 +127,7 @@ proc map2*[E,A,B,C](a: Either[E,A], b: Either[E,B], f: (A, B) -> C): Either[E,C]
   ## Maps 2 `Either` values via `f`
   a.flatMap((a: A) => b.map((b: B) => f(a,b)))
 
-proc map2Lazy*[A, B, C, E](
+proc map2F*[A, B, C, E](
   ma: Either[E, A],
   mb: () -> Either[E, B],
   f: (A, B) -> C
@@ -158,7 +158,7 @@ proc traverse*[T, E, U](xs: List[T], f: T -> Either[E, U]): Either[E, List[U]] =
   ## all results of applying `f` are `Right`.
   ## Doesnt execute `f` for elements after the first `Left` is encountered.
 
-  # Implementation with foldRightLazy breaks semcheck when inferring
+  # Implementation with foldRightF breaks semcheck when inferring
   # gcsafe. So we have to keep this basic.
   # Also, since tail calls are not guaranteed, we use a loop instead
   # of recursion.
