@@ -157,11 +157,21 @@ proc traverse*[T, E, U](xs: List[T], f: T -> Either[E, U]): Either[E, List[U]] =
   ## Transforms the list of `T` into the list of `U` f via `f` only if
   ## all results of applying `f` are `Right`.
   ## Doesnt execute `f` for elements after the first `Left` is encountered.
-  xs.foldRightLazy(
-    () => Nil[U]().right(E),
-    (x: T, ys: () -> Either[E, List[U]]) =>
-      f(x).map2Lazy(ys, (y: U, ys: List[U]) => y ^^ ys)
-  )
+
+  # Implementation with foldRightLazy breaks semcheck when inferring
+  # gcsafe. So we have to keep this basic.
+  # Also, since tail calls are not guaranteed, we use a loop instead
+  # of recursion.
+
+  var rest = xs
+  var acc = Nil[U]()
+  while not rest.isEmpty:
+    let headRes = f(rest.head)
+    if headRes.isLeft:
+      return headRes.getLeft.left(List[U])
+    acc = Cons(headRes.get, acc)
+    rest = rest.tail
+  acc.reverse.right(E)
 
 proc sequence*[E,A](xs: List[Either[E,A]]): Either[E,List[A]] =
   xs.traverse((x: Either[E,A]) => x)

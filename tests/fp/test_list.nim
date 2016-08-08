@@ -66,4 +66,12 @@ suite "List ADT":
     var lst2 = Nil[int]()
     for x in lst1:
       lst2 = Cons(x, lst2)
-    check: lst2 == lst1.reverse
+    check: lst2 == lst1.reverse  
+
+  test "List - traverse with Option should allow to properly infer gcsafe":
+    proc f(i: int): auto = i.some
+
+    proc g(): auto {.gcsafe.} =
+      asList(1, 2, 3).traverse(f)
+
+    discard g()

@@ -117,3 +117,11 @@ suite "Either ADT":
       else: "err".left(int)
     check: res == "err".left(List[int])
     check: cnt == 2
+
+  test "Either - traverse with List should allow to properly infer gcsafe":
+    proc f(i: int): auto = i.rightS
+
+    proc g(): auto {.gcsafe.} =
+      asList(1, 2, 3).traverse(f)
+
+    discard g()

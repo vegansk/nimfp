@@ -200,11 +200,23 @@ proc traverse*[T,U](xs: List[T], f: T -> Option[U]): Option[List[U]] =
   ## Transforms the list of `T` into the list of `U` f via `f` only if
   ## all results of applying `f` are defined.
   ## Doesnt execute `f` for elements after the first `None` is encountered.
-  xs.foldRightLazy(
-    () => Nil[U]().some,
-    (x: T, ys: () -> Option[List[U]]) =>
-      f(x).map2Lazy(ys, `^^`[U])
-  )
+
+  
+  # Implementation with foldRightLazy breaks semcheck when inferring
+  # gcsafe. So we have to keep this basic.
+  # Also, since tail calls are not guaranteed, we use a loop instead
+  # of recursion.
+
+  var rest = xs
+  var acc = Nil[U]()
+  while not rest.isEmpty:
+    let headRes = f(rest.head)
+    if headRes.isEmpty:
+      return List[U].none
+    acc = Cons(headRes.get, acc)
+    rest = rest.tail
+  acc.reverse.some
+
 
 proc sequence*[T](xs: List[Option[T]]): Option[List[T]] =
   ## Transforms the list of options into the option of list, which
