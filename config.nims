@@ -1,11 +1,4 @@
-version       = "0.1.0"
-author        = "Anatoly Galiulin <galiulin.anatoly@gmail.com>"
-description   = "Nim functional programming library"
-license       = "MIT"
-
-srcdir        = "src"
-
-requires "nim >= 0.13.1"
+srcdir = "src"
 
 proc buildBase(debug: bool, bin: string, src: string) =
   switch("out", (thisDir() & "/" & bin).toExe)
@@ -25,7 +18,7 @@ proc buildBase(debug: bool, bin: string, src: string) =
 
     --NimblePath: src
     --NimblePath: srcdir
-    
+
   setCommand "c", src
 
 proc test(name: string) =

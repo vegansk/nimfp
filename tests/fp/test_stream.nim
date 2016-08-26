@@ -2,21 +2,21 @@ import ../../src/fp/stream, ../../src/fp/option, future, unittest
 
 suite "Stream":
 
-  test "Stream - Initialization":
+  test "Initialization":
     let sInt = [1, 2, 3, 4, 5].asStream
 
     check: $sInt == "Stream(1, 2, 3, 4, 5)"
     check: sInt.toSeq == lc[x | (x <- 1..5), int]
     check: sInt.isEmpty == false
 
-  test "Stream - Accessors":
+  test "Accessors":
     let sInt = [1, 2, 3, 4, 5].asStream
 
     check: sInt.head == 1
     check: sInt.headOption == 1.some
     check: sInt.tail == [2, 3, 4, 5].asStream
 
-  test "Stream - Functions":
+  test "Functions":
     let sInt = [1, 2, 3, 4, 5].asStream
 
     check: sInt.take(2) == [1, 2].asStream
@@ -29,7 +29,7 @@ suite "Stream":
     check: sInt.append(() => 100) == [1, 2, 3, 4, 5, 100].asStream
     check: sInt.flatMap((x: int) => cons(() => x, () => cons(() => x * 100, () => int.empty))) == [1, 100, 2, 200, 3, 300, 4, 400, 5, 500].asStream
 
-  test "Stream - Check infinite streams":
+  test "Check infinite streams":
     proc intStream(fr: int): Stream[int] =
       cons(() => fr, () => intStream(fr + 1))
 

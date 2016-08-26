@@ -7,10 +7,11 @@ suite "Either ADT":
   let r = 10.rightS
   let l = "Error".left(int)
 
-  test "Either - Basic functions":
+  test "Basic functions":
     let l1 = Left[int,string](10)
     let l2 = 10.left("")
     let l3 = 10.left(string)
+    discard l3
     let r1 = Right[int,string]("test")
     let r2 = "test".right(0)
     let r3 = "test".right(int)
@@ -41,7 +42,7 @@ suite "Either ADT":
     check: 1.some.asEither("nope") == 1.rightS
     check: 1.none.asEither("nope") == "nope".left(int)
     
-  test "Either - Map":
+  test "Map":
     check: r.map(x => x * 2) == 20.rightS
     check: l.map(x => x * 2) != 20.rightS
     check: l.map(x => x * 2) == l
@@ -62,7 +63,7 @@ suite "Either ADT":
     proc badEither(): EitherS[int] = raise newException(Exception, "Not lazy!")
     check: "err".left(string).map2F(badEither, (x, y) => x & $y) == "err".left(string)
 
-  test "Either - Getters":
+  test "Getters":
     check: r.getOrElse(0) == 10
     check: r.getOrElse(() => 0) == 10
 
@@ -75,7 +76,7 @@ suite "Either ADT":
     check: l.orElse(r) == r
     check: l.orElse(() => r) == r
     
-  test "Either - Safe exceptions":
+  test "Safe exceptions":
     check: tryE(() => 2/4) == 0.5.rightE
     check: tryS(() => 2/4) == 0.5.rightS
     {.floatChecks: on.}
@@ -99,7 +100,7 @@ suite "Either ADT":
     check: g1.flatTryS.errorMsg == "Error 1"
     check: g2.flatTryE.errorMsg == "Error 2"
 
-  test "Either - Transformations":
+  test "Transformations":
     let good = @[1, 2, 3, 4, 5].asList
     let goodE = @[1, 2, 3, 4, 5].asList.map(x => x.rightS)
     let badE = @[1, 2, 3, 4].asList.map(x => x.rightS) ++ @["Error".left(int)].asList

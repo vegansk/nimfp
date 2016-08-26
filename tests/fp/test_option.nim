@@ -2,7 +2,7 @@ import ../../src/fp/option, unittest, future
 
 suite "Option ADT":
 
-  test "Option - Basic functions":
+  test "Basic functions":
     let s = "test".some
     let n = int.none
 
@@ -26,7 +26,7 @@ suite "Option ADT":
     check: s.get == "test"
     expect(AssertionError): discard n.get == 10
 
-  test "Option - Map":
+  test "Map":
     let f = (x: int) => $x
     check: 100500.some.map(f) == some("100500")
     check: 100500.none.map(f) == string.none
@@ -43,12 +43,12 @@ suite "Option ADT":
     check: "x".some.map(v => "\"" & v & "\"").getOrElse("y") == "\"x\""
     check: "x".none.map(v => "\"" & v & "\"").getOrElse("y") == "y"
 
-  test "Option - Flat map":
+  test "Flat map":
     let f = (x: int) => some(x * 2)
     check: 2.some.flatMap(f) == some(4)
     check: 2.none.flatMap(f) == none(4)
 
-  test "Option - Getters":
+  test "Getters":
     check: 2.some.getOrElse(3) == 2
     check: 2.none.getOrElse(3) == 3
 
@@ -61,21 +61,21 @@ suite "Option ADT":
     check: 2.some.orElse(() => 4.some) == 2.some
     check: 2.none.orElse(() => 4.some) == 4.some
 
-  test "Option - Filter":
+  test "Filter":
     let x = "123".some
     let y = "12345".some
     let n = "".none
     let p = (x: string) => x.len > 3
-    let notP = (x: string) => not p(x)
+    proc `!`[T](f: T -> bool): T -> bool = (v: T) => not f(v)
 
     check: x.filter(p) == n
-    check: x.filter(notP) == x
+    check: x.filter(!p) == x
     check: y.filter(p) == y
-    check: y.filter(notP) == n
+    check: y.filter(!p) == n
     check: n.filter(p) == n
-    check: n.filter(notP) == n
+    check: n.filter(!p) == n
 
-  test "Option - Traverse":
+  test "Traverse":
     let a = @[1, 2, 3]
 
     let f1 = (t: int) => (t - 1).some
@@ -84,7 +84,7 @@ suite "Option ADT":
     let f2 = (t: int) => (if (t < 3): t.some else: int.none)
     check: traverse(a, f2) == seq[int].none
 
-  test "Option - Misc":
+  test "Misc":
     check: ((x: int) => "Value " & $x).liftO()(1.some) == "Value 1".some
     var b = true
     false.some.forEach((v: bool) => (b = v))

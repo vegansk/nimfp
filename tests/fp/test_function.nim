@@ -2,7 +2,7 @@ import ../../src/fp/function, unittest, future
 
 suite "Functions":
 
-  test "Function - Memoization":
+  test "Memoization":
     var x = 0
     let f = () => (inc x; x)
     let fm = f.memoize

@@ -4,7 +4,7 @@ type ForComprehension = distinct object
 
 var fc*: ForComprehension
 
-macro `[]`*(fc: ForComprehension, comp: expr): expr =
+macro `[]`*(fc: ForComprehension, comp: untyped): untyped =
   ## For comprehension with list comprehension like syntax.
   ## Example:
   ## 
@@ -49,7 +49,7 @@ macro `[]`*(fc: ForComprehension, comp: expr): expr =
     result = quote do:
       `cont`.flatMap(`lmb`)
 
-macro act*(comp: untyped): expr =
+macro act*(comp: untyped): untyped =
   ## For comprehension with Haskell ``do notation`` like syntax.
   ## Example:
   ## 

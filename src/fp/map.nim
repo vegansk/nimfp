@@ -1,7 +1,4 @@
-import list, future, option
-
-# Initial map realization. Usefull to test the API but not for the production.
-# It uses the list of key-value pairs
+import list, future, option, boost.data.rbtree
 
 type
   Map*[K,V] = distinct List[tuple[k: K, v: V]]
