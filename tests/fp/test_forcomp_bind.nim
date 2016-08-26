@@ -9,7 +9,7 @@ suite "Symbol binding in act":
   test "ForComp - act should not require additional imports":
     let success = compiles(
       act do:
-       (x: int) <- 1.some
+       x <- 1.some
        x.some
     )
 
