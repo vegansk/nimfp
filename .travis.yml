@@ -9,7 +9,9 @@ before_install:
   - bin/nim c koch
   - ./koch boot -d:release
   - export PATH=$PWD/bin:$PATH
+  - nim install_nimble.nims
   - cd ..
 script:
+  - nimble install -y
   - nim test
   

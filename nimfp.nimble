@@ -8,4 +8,4 @@ license       = "MIT"
 srcDir = "src"
 
 [Deps]
-Requires: "nim >= 0.14.3", "nimboost >= 0.2.1"
+Requires: "nim >= 0.14.3, nimboost >= 0.2.1"
