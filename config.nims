@@ -1,5 +1,8 @@
 srcdir = "src"
 
+template dep(name: untyped): untyped =
+  exec "nim " & astToStr(name)
+
 proc buildBase(debug: bool, bin: string, src: string) =
   switch("out", (thisDir() & "/" & bin).toExe)
   --nimcache: build
@@ -27,5 +30,9 @@ proc test(name: string) =
   --run
   buildBase true, "bin/test_" & name, "tests/fp/test_" & name
 
-task test, "Run all tests":
+task test_int, "Run all tests - internal":
   test "all"
+
+task test, "Run all tests":
+  dep test_int
+  exec"nimble install -y"
