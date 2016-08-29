@@ -4,20 +4,7 @@ type ForComprehension = distinct object
 
 var fc*: ForComprehension
 
-macro `[]`*(fc: ForComprehension, comp: untyped): untyped =
-  ## For comprehension with list comprehension like syntax.
-  ## Example:
-  ## 
-  ## .. code-block:: nim
-  ##   
-  ##   let res = fc[(y*100).some | (
-  ##     (x: int) <- 1.some,
-  ##     (y: int) <- (x + 3).some
-  ##   )]
-  ##   assert(res == 400.some)
-  ##
-  ## The only requirement for the user is to implement `foldMap`` function for the type
-  ## 
+proc forCompImpl(comp: NimNode): NimNode {.compileTime.} =
   expectLen(comp, 3)
   expectKind(comp, nnkInfix)
   expectKind(comp[0], nnkIdent)
@@ -49,6 +36,22 @@ macro `[]`*(fc: ForComprehension, comp: untyped): untyped =
     result = quote do:
       `cont`.flatMap(`lmb`)
 
+macro `[]`*(fc: ForComprehension, comp: untyped): untyped =
+  ## For comprehension with list comprehension like syntax.
+  ## Example:
+  ##
+  ## .. code-block:: nim
+  ##
+  ##   let res = fc[(y*100).some | (
+  ##     (x: int) <- 1.some,
+  ##     (y: int) <- (x + 3).some
+  ##   )]
+  ##   assert(res == 400.some)
+  ##
+  ## The only requirement for the user is to implement `foldMap`` function for the type
+  ##
+  forCompImpl(comp)
+
 macro act*(comp: untyped): untyped =
   ## For comprehension with Haskell ``do notation`` like syntax.
   ## Example:
@@ -66,14 +69,12 @@ macro act*(comp: untyped): untyped =
   expectKind comp, {nnkStmtList, nnkDo}
   let stmts = if comp.kind == nnkStmtList: comp else: comp.findChild(it.kind == nnkStmtList)
   expectMinLen(stmts, 2)
-  result = newCall(bindSym"[]")
-  result.add(bindSym"fc")
-  block:
-    let op = newNimNode(nnkInfix)
-    result.add(op)
-    op.add(ident"|")
-    op.add(stmts[stmts.len-1].copyNimTree)
-    let par = newNimNode(nnkPar)
-    op.add(par)
-    for i in 0..<(stmts.len-1):
-      par.add(stmts[i].copyNimTree)
+  let op = newNimNode(nnkInfix)
+  op.add(ident"|")
+  op.add(stmts[stmts.len-1].copyNimTree)
+  let par = newNimNode(nnkPar)
+  op.add(par)
+  for i in 0..<(stmts.len-1):
+    par.add(stmts[i].copyNimTree)
+
+  forCompImpl(op)

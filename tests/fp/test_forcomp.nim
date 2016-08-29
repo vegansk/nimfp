@@ -136,7 +136,15 @@ suite "ForComp":
       @[x * y + z]
 
     echo res
-    
+
+  test "act in generics":
+    # https://github.com/nim-lang/Nim/issues/4669
+    proc foo[A](a: A): Option[A] =
+      act do:
+        a0 <- a.some
+        a0.some
+
+    assert: foo("123") == "123".some
 
 #Syntax 1:
 # dumpTree:
