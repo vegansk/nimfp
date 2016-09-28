@@ -185,6 +185,9 @@ proc find*[T](xs: List[T], p: T -> bool): Option[T] =
   else:
     if p(xs.head): xs.head.some else: xs.tail.find(p)
 
+proc contains*[T](xs: List[T], x: T): bool =
+  xs.find((y: T) => x == y).isDefined
+
 proc hasSubsequence*[T](xs: List[T], ys: List[T]): bool =
   ## Checks if `ys` in `xs`
   if ys.isEmpty:
