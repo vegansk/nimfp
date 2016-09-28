@@ -115,6 +115,17 @@ proc dropWhile*[T](xs: List[T], p: T -> bool): List[T] =
   of true: xs
   else: (if not xs.head.p(): xs else: xs.tail.dropWhile(p))
 
+proc span*[T](xs: List[T], p: T -> bool): (List[T], List[T]) =
+  ## Splits `xs` into two parts: longest prefix for which `p` holds,
+  ## and the remainder.
+  proc worker(acc: List[T], todo: List[T]): (List[T], List[T]) =
+    if todo.isEmpty or not p(todo.head):
+      (acc.reverse, todo)
+    else:
+      worker(todo.head ^^ acc, todo.tail)
+
+  worker(Nil[T](), xs)
+
 proc dup*[T](xs: List[T]): List[T] =
   ## Duplicates the list
   xs.foldRight(Nil[T](), (x: T, xs: List[T]) => Cons(x, xs))

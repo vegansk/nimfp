@@ -68,6 +68,10 @@ suite "List ADT":
     check: asList((1, 'a'), (2, 'b'), (2, 'c')).lookup(2) == 'b'.some
     check: asList((1, 'a'), (2, 'b'), (2, 'c')).lookup(3) == char.none
 
+    check: asList(1, 2, 3).span((i: int) => i <= 2) == (asList(1, 2), asList(3))
+    check: asList(1, 2, 3).span((i: int) => i mod 2 == 1) == (asList(1), asList(2, 3))
+    check: asList(1, 2, 3).span((i: int) => true) == (asList(1, 2, 3), Nil[int]())
+
   test "Iterator":
     let lst1 = [1, 2, 3, 4, 5].asList
     var lst2 = Nil[int]()
