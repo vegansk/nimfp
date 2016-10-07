@@ -8,10 +8,10 @@ type
   Option*[T] = ref object
     ## Option ADT
     case kind: OptionKind
-    of okNone:
-      discard
-    else:
+    of okSome:
       value: T
+    else:
+      discard
 
 proc Some*[T](value: T): Option[T] =
   ## Constructs option object with value
