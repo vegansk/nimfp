@@ -29,7 +29,7 @@ proc none*(T: typedesc): Option[T] = None[T]()
 proc notNil*[T](o: Option[T]): Option[T] =
   ## Maps nil object to none
   if o.kind == okSome and o.value == nil:
-    T.none
+    none(T)
   else:
     o
 
@@ -69,11 +69,11 @@ proc map*[T,U](o: Option[T], f: T -> U): Option[U] =
   if o.isDefined:
     f(o.value).some
   else:
-    U.none
+    none(U)
 
 proc flatMap*[T,U](o: Option[T], f: T -> Option[U]): Option[U] =
   ## Returns the result of applying `f` if `o` is defined, or none
-  if o.isDefined: f(o.value) else: U.none
+  if o.isDefined: f(o.value) else: none(U)
 
 proc get*[T](o: Option[T]): T =
   ## Returns option's value if defined, or fail
@@ -99,11 +99,11 @@ proc orElse*[T](o: Option[T], f: void -> Option[T]): Option[T] =
 proc filter*[T](o: Option[T], p: T -> bool): Option[T] =
   ## Returns `o` if it is defined and the result of applying `p`
   ## to it's value is true
-  if o.isDefined and p(o.value): o else: T.none
+  if o.isDefined and p(o.value): o else: none(T)
 
 proc map2*[T,U,V](t: Option[T], u: Option[U], f: (T, U) -> V): Option[V] =
   ## Returns the result of applying f to `t` and `u` value if they are both defined
-  if t.isDefined and u.isDefined: f(t.value, u.value).some else: V.none
+  if t.isDefined and u.isDefined: f(t.value, u.value).some else: none(V)
 
 proc map2F*[A, B, C](
   ma: Option[A],
@@ -118,7 +118,7 @@ proc zip*[T, U](t: Option[T], u: Option[U]): Option[(T, U)] =
   if t.isDefined and u.isDefined:
     (t.get, u.get).some
   else:
-    (T, U).none
+    none((T, U))
 
 proc liftO*[T,U](f: T -> U): proc(o: Option[T]): Option[U] =
   ## Turns the function `f` of type `T -> U` into the function
@@ -153,7 +153,7 @@ proc traverse*[T, U](ts: seq[T], f: T -> Option[U]): Option[seq[U]] =
     if mu.isDefined:
       acc[i] = mu.get
     else:
-      return seq[U].none
+      return none(seq[U])
   return acc.some
 
 
