@@ -3,7 +3,7 @@ import future, option
 {.experimental.}
 
 type
-  ListNodeKind = enum 
+  ListNodeKind = enum
     lnkNil, lnkCons
   List*[T] = ref object
     ## List ADT
@@ -125,6 +125,27 @@ proc span*[T](xs: List[T], p: T -> bool): (List[T], List[T]) =
       worker(todo.head ^^ acc, todo.tail)
 
   worker(Nil[T](), xs)
+
+proc partition*[T](xs: List[T], p: T -> bool): (List[T], List[T]) =
+  ## Splits list into two parts: elements for which `p` holds, and
+  ## elements for which it does not. The order of elements in both
+  ## parts is preserved.
+  ##
+  ## equivalent to `(xs.filter(p), xs.filter(t => not p(t)))`
+  ## (except for side effects of `p`)
+
+  # Assembles the result in reverse order.
+
+  proc worker(acc: (List[T], List[T]), x: T): auto =
+    if p(x):
+      (x ^^ acc[0], acc[1])
+    else:
+      (acc[0], x ^^ acc[1])
+
+  let acc = xs.foldLeft((Nil[T](), Nil[T]()), worker)
+
+  # Restore the order
+  (acc[0].reverse, acc[1].reverse)
 
 proc dup*[T](xs: List[T]): List[T] =
   ## Duplicates the list
