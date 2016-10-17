@@ -43,10 +43,18 @@ proc tail*[T](xs: List[T]): List[T] =
   else: xs
 
 iterator items*[T](xs: List[T]): T =
-  var curr = xs
-  while not curr.isEmpty:
-    yield curr.head
-    curr = curr.tail
+  var cur = xs
+  while not cur.isEmpty:
+    yield cur.head
+    cur = cur.tail
+
+iterator pairs*[T](xs: List[T]): tuple[key: int, val: T] =
+  var cur = xs
+  var i = 0.int
+  while not cur.isEmpty:
+    yield (i, cur.head)
+    cur = cur.tail
+    inc i
 
 proc `==`*[T](xs, ys: List[T]): bool =
   ## Compares two lists

@@ -77,12 +77,16 @@ suite "List ADT":
     check: asList(1, 2, 3).partition((i: int) => i > 4) == (Nil[int](), asList(1, 2, 3))
     check: asList(1, 2, 3).partition((i: int) => i > 0) == (asList(1, 2, 3), Nil[int]())
 
-  test "Iterator":
+  test "Iterators":
     let lst1 = [1, 2, 3, 4, 5].asList
     var lst2 = Nil[int]()
     for x in lst1:
       lst2 = Cons(x, lst2)
     check: lst2 == lst1.reverse
+
+    let lst3 = [1, 2, 3, 4, 5].asList
+    for i, x in lst3:
+      check: i == x.pred
 
   test "List - traverse with Option should allow to properly infer gcsafe":
     proc f(i: int): auto = i.some
