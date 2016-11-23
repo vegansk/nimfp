@@ -48,6 +48,11 @@ suite "Option ADT":
     check: 2.some.flatMap(f) == some(4)
     check: 2.none.flatMap(f) == none(4)
 
+  test "Join":
+    check: 2.some.some.join == 2.some
+    check: int.none.some.join == int.none
+    check: Option[int].none.join == int.none
+
   test "Getters":
     check: 2.some.getOrElse(3) == 2
     check: 2.none.getOrElse(3) == 3

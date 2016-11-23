@@ -75,6 +75,9 @@ proc flatMap*[T,U](o: Option[T], f: T -> Option[U]): Option[U] =
   ## Returns the result of applying `f` if `o` is defined, or none
   if o.isDefined: f(o.value) else: none(U)
 
+proc join*[T](mmt: Option[Option[T]]): Option[T] =
+  mmt.flatMap((mt: Option[T]) => mt)
+
 proc get*[T](o: Option[T]): T =
   ## Returns option's value if defined, or fail
   doAssert(o.isDefined, "Can't get Option's value")
