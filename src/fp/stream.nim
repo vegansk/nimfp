@@ -94,6 +94,10 @@ proc toList*[T](xs: Stream[T]): List[T] =
   of snkEmpty: Nil[T]()
   else: xs.h() ^^ xs.t().toList()
 
+proc asList*[T](xs: Stream[T]): List[T] =
+  ## Converts stream to list
+  xs.toList
+
 proc `$`*[T](xs: Stream[T]): string =
   ## Converts stream to string
   let f = (s: () -> string, x: T) => (() => (

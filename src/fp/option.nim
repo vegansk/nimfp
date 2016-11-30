@@ -76,6 +76,7 @@ proc flatMap*[T,U](o: Option[T], f: T -> Option[U]): Option[U] =
   if o.isDefined: f(o.value) else: none(U)
 
 proc join*[T](mmt: Option[Option[T]]): Option[T] =
+  ## Flattens the option
   mmt.flatMap((mt: Option[T]) => mt)
 
 proc get*[T](o: Option[T]): T =

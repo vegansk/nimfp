@@ -1,11 +1,10 @@
-[Package]
-name          = "nimfp"
-version       = "0.2.2"
+# Package
+version       = "0.2.3"
 author        = "Anatoly Galiulin <galiulin.anatoly@gmail.com>"
 description   = "Nim functional programming library"
 license       = "MIT"
 
 srcDir = "src"
 
-[Deps]
-Requires: "nim >= 0.14.3, nimboost >= 0.2.1"
+# Deps
+requires "nim >= 0.14.3", "nimboost >= 0.3.2"

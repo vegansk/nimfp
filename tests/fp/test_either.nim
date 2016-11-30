@@ -1,4 +1,10 @@
-import ../../src/fp/list, ../../src/fp/either, ../../src/fp/option, unittest, future
+import ../../src/fp/list,
+       ../../src/fp/either,
+       ../../src/fp/option,
+       unittest,
+       future,
+       boost.types,
+       threadpool
 
 {.warning[SmallLshouldNotBeUsed]: off.}
 
@@ -41,11 +47,26 @@ suite "Either ADT":
 
     check: 1.some.asEither("nope") == 1.rightS
     check: 1.none.asEither("nope") == "nope".left(int)
-    
+
+    check: 1.rightS.asOption == 1.some
+    check: ().left(int).asOption == none(int)
+
+    check: 1.rightS.flip == 1.left(string)
+    check: 1.left(string).flip == 1.rightS
+
+    check: 1.rightS.toUnit == ().rightS
+
+    check: 1.rightS.rightS.join == 1.rightS
+    check: "error".left(1.rightS).join == "error".left(int)
+    check: ("error".left(int)).rightS.join == "error".left(int)
+
   test "Map":
     check: r.map(x => x * 2) == 20.rightS
     check: l.map(x => x * 2) != 20.rightS
     check: l.map(x => x * 2) == l
+
+    check: 1.rightS.mapLeft(_ => 404) == 1.right(int)
+    check: "Error".left(int).mapLeft(_ => 404) == 404.left(int)
 
     check: r.flatMap((x: int) => (x * 2).rightS) == 20.rightS
     check: r.flatMap((x: int) => l) == l
@@ -72,10 +93,10 @@ suite "Either ADT":
 
     check: r.orElse(l) == r
     check: r.orElse(() => l) == r
-    
+
     check: l.orElse(r) == r
     check: l.orElse(() => r) == r
-    
+
   test "Safe exceptions":
     check: tryE(() => 2/4) == 0.5.rightE
     check: tryS(() => 2/4) == 0.5.rightS
@@ -127,10 +148,45 @@ suite "Either ADT":
     check: 1.some.traverse(rightFunc) == true.some.rightS
     check: 1.some.traverse(leftFunc) == "foo".left(Option[bool])
 
-  test "Either - traverse with List should allow to properly infer gcsafe":
+  test "Traverse with List should allow to properly infer gcsafe":
     proc f(i: int): auto = i.rightS
 
     proc g(): auto {.gcsafe.} =
       asList(1, 2, 3).traverse(f)
 
     discard g()
+
+  test "Control flow":
+    check: whenF(true, () => "error".left(Unit)) == "error".left(Unit)
+    check: whenF(false, () => "error".left(Unit)) == ().rightS
+
+    let whileRes = whileM(10) do (v: int) -> auto:
+      (v > 0).rightS
+    do (v: int) -> auto:
+      (v - 1).rightS
+    check: whileRes == 0.rightS
+    check: whileM("error", (v: string) => v.left(bool), (v: string) => v.rightS) == "error".left(string)
+
+    check: 1.rightE.run == 1
+    expect(ValueError):
+      discard newException(ValueError, "error").left(int).run
+
+    const sres = "Hello, world!"
+    let bres = bracket do () -> auto:
+      cast[ptr array[100, char]](allocShared(100)).rightS
+    do (s: ptr array[100, char]) -> auto:
+      deallocShared(cast[pointer](s))
+      ().rightS
+    do (s: ptr array[100, char]) -> auto:
+      proc thr(p: pointer) {.thread.} =
+        copyMem(p, sres.cstring, sres.len + 1)
+      var t: Thread[pointer]
+      createThread(t, thr, s)
+      t.joinThread
+      ($s[]).rightS
+    check: bres.run == sres
+
+    let eres = "Exception".left(int).catch do (s: string) -> auto:
+      1.rightE
+    check: eres == 1.rightE
+

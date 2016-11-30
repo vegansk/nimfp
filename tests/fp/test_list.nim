@@ -60,6 +60,7 @@ suite "List ADT":
     check: asList(2, 4, 6, 9).forAll((x: int) => x mod 2 == 0) == false
     check: asList(1, 2, 3).zip(asList('a', 'b', 'c')) == asList((1, 'a'), (2, 'b'), (3, 'c'))
     check: asList((1, 'a'), (2, 'b'), (3, 'c')).unzip == (asList(1, 2, 3), asList('a', 'b', 'c'))
+    check: [1,2,3].asList.zipWithIndex(-1) == [(1, -1), (2, 0), (3, 1)].asList
 
     check: asList(1, 2, 3).contains(2)
     check: not asList(1, 2, 3).contains(4)

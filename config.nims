@@ -6,6 +6,7 @@ template dep(name: untyped): untyped =
 proc buildBase(debug: bool, bin: string, src: string) =
   switch("out", (thisDir() & "/" & bin).toExe)
   --nimcache: build
+  --threads:on
   if not debug:
     --forceBuild
     --define: release

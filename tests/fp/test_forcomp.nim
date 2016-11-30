@@ -39,12 +39,12 @@ suite "ForComp":
       (x: int) <- 1.rightS,
       (y: int) <- (x + 3).rightS
     )] == 400.rightS
-    
+
     check: fc[(y*100).rightS | (
       (x: int) <- "Fail".left(int),
       (y: int) <- (x + 3).rightS
     )] == "Fail".left(int)
-    
+
   test "Option - act macro":
     # for (x <- 1.some, y <- x + 3) yield y * 100
     let res = act do:
@@ -57,7 +57,7 @@ suite "ForComp":
       (y: int) <- (x + 3).some
       (y*100).some
     check: res2 == int.none
-    
+
   test "Either - act macro":
     # for (x <- 1.rightS, y <- x + 3) yield y * 100
     let res = act do:
@@ -68,7 +68,7 @@ suite "ForComp":
     let res2 = act do:
       (x: int) <- "Fail".left(int)
       (y: int) <- (x + 3).rightS
-      (y*100).rightS 
+      (y*100).rightS
     check: res2 == "Fail".left(int)
 
   test "``if`` example":
@@ -114,12 +114,10 @@ suite "ForComp":
   test "Streams test":
     proc intStream(fr: int): Stream[int] =
       cons(() => fr, () => intStream(fr + 1))
-
     let res = act do:
       x <- intStream(1)
       asStream("S" & $x)
-
-    echo res.take(10)
+    check: res.take(10).asList == lc[i | (i <- 1..10), int].asList.map(v => "S" & $v)
 
   test "Custom types":
     proc flatMap[T](s: seq[T], f: T -> seq[T]): seq[T] =

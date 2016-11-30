@@ -60,6 +60,11 @@ proc map*[K,V,K1,V1](m: Map[K,V], f: proc(item: (K,V)): (K1,V1)): Map[K1,V1] =
   for k, v in m.pairs:
     result = result.add(f((k, v)))
 
+proc mapValues*[K,V1,V2](m: Map[K,V1], f: V1 -> V2): Map[K,V2] =
+  result = newMap[K,V2]()
+  for k, v in m.pairs:
+    result = result.add((k, f(v)))
+
 proc `==`*[K,V](m1, m2: Map[K,V]): bool =
   m1.equals(m2)
 

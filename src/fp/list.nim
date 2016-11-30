@@ -211,6 +211,12 @@ proc zipWith*[T,U,V](xs: List[T], ys: List[U], f: (T,U) -> V): List[V] =
   else:
     Cons(f(xs.head, ys.head), zipWith(xs.tail, ys.tail, f))
 
+proc zipWithIndex*[T](xs: List[T], startIndex = 0): List[(T, int)] =
+  if xs.isEmpty:
+    Nil[(T,int)]()
+  else:
+    (xs.head, startIndex) ^^ zipWithIndex(xs.tail, succ startIndex)
+
 proc zip*[T,U](xs: List[T], ys: List[U]): List[(T,U)] =
   xs.zipWith(ys, (x, y) => (x, y))
 

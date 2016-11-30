@@ -1,4 +1,4 @@
-import future, list, option
+import future, list, option, boost.types
 
 {.experimental.}
 
@@ -14,7 +14,7 @@ type
       rValue: A
   EitherE*[A] = Either[ref Exception, A]
   EitherS*[A] = Either[string, A]
- 
+
 proc Left*[E,A](value: E): Either[E,A] =
   ## Constructs left value
   Either[E,A](kind: ekLeft, lValue: value)
@@ -93,6 +93,10 @@ proc map*[E,A,B](e: Either[E,A], f: A -> B): Either[E,B] =
   ## Maps right value of `e` via `f` or returns left value
   if e.isLeft: e.lValue.left(B) else: f(e.rValue).right(E)
 
+proc mapLeft*[E,F,A](e: Either[E,A], f: E -> F): Either[F,A] =
+  ## Maps left value of `e` via `f` or returns right value
+  if e.isRight: e.rValue.right(F) else: f(e.lValue).left(A)
+
 proc flatMap*[E,A,B](e: Either[E,A], f: A -> Either[E,B]): Either[E,B] =
   ## Returns the result of applying `f` to the right value or returns left value
   if e.isLeft: e.lValue.left(B) else: f(e.rValue)
@@ -114,7 +118,7 @@ proc getOrElse*[E,A](e: Either[E,A], d: A): A =
 proc getOrElse*[E,A](e: Either[E,A], f: void -> A): A =
   ## Return right value or result of `f`
   if e.isRight: e.rValue else: f()
-  
+
 proc orElse*[E,A](e: Either[E,A], d: Either[E,A]): Either[E,A] =
   ## Returns `e` if it contains right value, or `d`
   if e.isRight: e else: d
@@ -135,6 +139,10 @@ proc map2F*[A, B, C, E](
   ## Maps 2 `Either` values via `f`. Lazy in second argument.
   ma.flatMap((a: A) => mb().map((b: B) => f(a, b)))
 
+proc join*[E,A](e: Either[E, Either[E,A]]): Either[E,A] =
+  ## Flattens Either's value
+  e.flatMap((v: Either[E,A]) => v)
+
 when compiles(getCurrentException()):
   proc tryE*[A](f: () -> A): EitherE[A] =
     ## Transforms exception to EitherE type
@@ -143,16 +151,26 @@ when compiles(getCurrentException()):
   proc flatTryE*[A](f: () -> EitherE[A]): EitherE[A] =
     ## Transforms exception to EitherE type
     (try: f() except: getCurrentException().left(A))
-    
-when compiles(getCurrentExceptionMsg()):
+
   proc tryS*[A](f: () -> A): EitherS[A] =
     ## Transforms exception to EitherS type
     (try: f().rightS except: getCurrentExceptionMsg().left(A))
-    
+
   proc flatTryS*[A](f: () -> EitherS[A]): EitherS[A] =
     ## Transforms exception to EitherS type
     (try: f() except: getCurrentExceptionMsg().left(A))
-    
+
+  proc run*[E,A](e: Either[E,A]): A =
+    ## Returns right value or raises the error contained
+    ## in the left part
+    if e.isRight:
+      result = e.get
+    else:
+      when E is ref Exception:
+        raise e.getLeft
+      else:
+        raise newException(Exception, $e.getLeft)
+
 proc traverse*[T, E, U](xs: List[T], f: T -> Either[E, U]): Either[E, List[U]] =
   ## Transforms the list of `T` into the list of `U` f via `f` only if
   ## all results of applying `f` are `Right`.
@@ -191,20 +209,79 @@ proc forEach*[E,A](a: Either[E,A], f: A -> void): void =
     f(a.get)
 
 proc cond*[E,A](flag: bool, a: A, e: E): Either[E,A] =
-  ## If the condition is satisfied, return a else return e
+  ## If the condition is satisfied, returns a else returns e
   if flag: a.right(E) else: e.left(A)
 
 proc condF*[E,A](flag: bool, a: () -> A, e: () -> E): Either[E,A] =
-  ## If the condition is satisfied, return a else return e
+  ## If the condition is satisfied, returns a else returns e
   if flag: a().right(E) else: e().left(A)
 
-proc asEither*[E,A](o: Option[A], e: E): Either[E,A] = 
-  ## Convert Option to Either type
+proc asEither*[E,A](o: Option[A], e: E): Either[E,A] =
+  ## Converts Option to Either type
   condF(o.isDefined, () => o.get, () => e)
 
-proc asEitherF*[E,A](o: Option[A], e: () -> E): Either[E,A] = 
-  ## Convert Option to Either type
+proc asEitherF*[E,A](o: Option[A], e: () -> E): Either[E,A] =
+  ## Converts Option to Either type 
   condF(o.isDefined, () => o.get, e())
+
+proc asOption*[E,A](e: Either[E,A]): Option[A] =
+  ## Converts Either to Option type
+  if e.isRight: e.get.some
+  else: A.none
+
+proc flip*[E,A](e: Either[E,A]): Either[A,E] =
+  ## Flips Either's left and right parts
+  if e.isRight: e.get.left(E)
+  else: e.getLeft.right(A)
+
+proc whenF*[E](flag: bool, body: () -> Either[E, Unit]): Either[E, Unit] =
+  ## Executes `body` if `flag` is true
+  if flag: body()
+  else: ().right(E)
+
+proc whileM*[E,A](a: A, cond: A -> Either[E, bool], body: A -> Either[E, A]): Either[E,A] =
+  ## Executes the body while `cond` returns ``true.right(E)``
+  var acc = a
+  while true:
+    let condRes = cond(acc)
+    if condRes.isLeft:
+      return condRes.getLeft.left(A)
+    elif not condRes.get:
+      return acc.right(E)
+    result = body(acc)
+    if result.isLeft:
+      return
+    acc = result.get
+
+proc whileM*[E](cond: () -> Either[E, bool], body: () -> Either[E, Unit]): Either[E, Unit] =
+  ## Executes the body while `cond` returns ``true.right(E)``
+  whileM((), _ => cond(), _ => body())
+
+proc toUnit*[E,A](e: Either[E,A]): Either[E, Unit] =
+  ## Discards the Either's value
+  e.flatMap((_:A) => ().right(E))
+
+proc bracket*[E,A,B](
+  acquire: () -> Either[E,A],
+  release: A -> Either[E, Unit],
+  body: A -> Either[E,B]
+): Either[E,B] =
+  ## Acquires the resource with `acquire`, then executes `body`
+  ## and then releases it with `release`.
+  acquire().flatMap do (a: A) -> auto:
+    let r = body(a)
+    release(a).flatMap((_: Unit) => r)
+
+proc catch*[E1,E2,A](
+  body: Either[E1,A],
+  handler: E1 -> Either[E2,A]
+): Either[E2,A] =
+  ## Runs `body`. If it fails, execute `handler` with the
+  ## value of exception
+  if body.isLeft:
+    handler(body.getLeft)
+  else:
+    body.get.right(E2)
 
 template elemType*(v: Either): typedesc =
   ## Part of ``do notation`` contract

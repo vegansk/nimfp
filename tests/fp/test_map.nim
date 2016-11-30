@@ -17,9 +17,9 @@ suite "Map ADT":
     check: (m - 1).get(1) == "11".none
 
     let r = m.map((i: (int,string)) => ($i.key, i.value.parseInt))
-    echo r
-    echo([("3", 3), ("1", 1), ("2", 2)].asMap)
     check: r == [("3", 3), ("1", 1), ("2", 2)].asMap
+
+    check: m.mapValues(v => v & v) == [(3, "33"), (1, "11"), (2, "22")].asMap
 
   test "Misc":
     var x = 0
