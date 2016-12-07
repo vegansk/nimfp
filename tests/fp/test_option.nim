@@ -23,6 +23,9 @@ suite "Option ADT":
     check: "123".none.notEmpty == "".none
     check: nil.string.some.notEmpty == "".none
 
+    check: (2 < 3).optionF(() => true).getOrElse(false)
+    check: (2 < 3).option(true).getOrElse(false)
+
     check: s.get == "test"
     expect(AssertionError): discard n.get == 10
 

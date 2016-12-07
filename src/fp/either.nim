@@ -283,6 +283,14 @@ proc catch*[E1,E2,A](
   else:
     body.get.right(E2)
 
+proc asEitherS*[E,A](e: Either[E,A]): EitherS[A] =
+  ## Converts Either to EitherS
+  e.mapLeft((err: E) => $err)
+
+proc asEitherE*[E,A](e: Either[E,A]): EitherE[A] =
+  ## Converts Either to EitherE
+  e.mapLeft((err: E) => newException(Exception, $err))
+
 template elemType*(v: Either): typedesc =
   ## Part of ``do notation`` contract
   type(v.get)

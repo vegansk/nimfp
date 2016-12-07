@@ -40,6 +40,16 @@ proc notEmpty*(o: Option[string]): Option[string] =
   else:
     o
 
+proc option*[T](p: bool, v: T): Option[T] =
+  ## Returns the boxed value of `v` if ``p == true`` or None
+  if p: v.some
+  else: T.none
+
+proc optionF*[T](p: bool, f: () -> T): Option[T] =
+  ## Returns the boxed value of ``f()`` if ``p == true`` or None
+  if p: f().some
+  else: T.none
+
 proc `==`*[T](x, y: Option[T]): bool =
   if x.isDefined and y.isDefined:
     x.value == y.value

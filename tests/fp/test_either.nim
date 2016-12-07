@@ -48,6 +48,9 @@ suite "Either ADT":
     check: 1.some.asEither("nope") == 1.rightS
     check: 1.none.asEither("nope") == "nope".left(int)
 
+    check: "Error".left(int).asEitherE.getLeft.msg == "Error"
+    check: newException(Exception, "Error").left(int).asEitherS.getLeft == "Error"
+
     check: 1.rightS.asOption == 1.some
     check: ().left(int).asOption == none(int)
 
