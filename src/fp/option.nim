@@ -174,3 +174,6 @@ proc traverse*[T, U](ts: seq[T], f: T -> Option[U]): Option[seq[U]] =
 template elemType*(v: Option): typedesc =
   ## Part of ``do notation`` contract
   type(v.get)
+
+proc point*[A](t: typedesc[Option[A]], v: A): Option[A] =
+  v.some

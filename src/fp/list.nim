@@ -293,3 +293,6 @@ proc asSeq*[T](xs: List[T]): seq[T] =
 template elemType*(v: List): typedesc =
   ## Part of ``do notation`` contract
   type(v.head)
+
+proc point*[T](t: typedesc[List[T]], v: T): List[T] =
+  v ^^ Nil[T]()

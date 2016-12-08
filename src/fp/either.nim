@@ -294,3 +294,6 @@ proc asEitherE*[E,A](e: Either[E,A]): EitherE[A] =
 template elemType*(v: Either): typedesc =
   ## Part of ``do notation`` contract
   type(v.get)
+
+proc point*[E,A](e: typedesc[Either[E,A]], v: A): Either[E,A] =
+  v.right(E)
