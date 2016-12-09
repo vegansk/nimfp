@@ -9,6 +9,8 @@ suite "Stream":
     check: sInt.toSeq == lc[x | (x <- 1..5), int]
     check: sInt.isEmpty == false
 
+    check: (() => 1).point(Stream).toSeq == @[1]
+
   test "Accessors":
     let sInt = [1, 2, 3, 4, 5].asStream
 

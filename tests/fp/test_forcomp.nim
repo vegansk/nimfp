@@ -133,7 +133,7 @@ suite "ForComp":
       z <- @[5, 7]
       @[x * y + z]
 
-    echo res
+    check: res == @[105, 107, 205, 207, 305, 307, 205, 207, 405, 407, 605, 607, 305, 307, 605, 607, 905, 907]
 
   test "act in generics":
     # https://github.com/nim-lang/Nim/issues/4669
@@ -143,6 +143,14 @@ suite "ForComp":
         a0.some
 
     assert: foo("123") == "123".some
+
+  test "Yield in do notation":
+    let res = act do:
+      x <- 1.some
+      y <- 2.some
+      z <- 3.some
+      yield x + y + z
+    check: res == 6.some
 
 #Syntax 1:
 # dumpTree:
@@ -154,9 +162,9 @@ suite "ForComp":
 #   )]
 # Syntax 2:
 # dumpTree:
-#   let x = forc do:
+#   let x = act do:
 #     (x: int) <- 1.some
 #     (y: int) <- 2.some
 #     (_: int) <- doSomething()
 #     (z: int) <- (y * 3).some
-#     (x + y + z).some
+#     yield x + y + z

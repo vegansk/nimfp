@@ -52,7 +52,7 @@ proc toSeq*[T](xs: Stream[T]): seq[T] =
 proc isEmpty*[T](xs: Stream[T]): bool =
   ## Checks if the stream is empty
   xs.k == snkEmpty
-  
+
 proc head*[T](xs: Stream[T]): T =
   ## Returns the head of the stream or throws an exception if empty
   xs.h()
@@ -123,14 +123,14 @@ proc drop*[T](xs: Stream[T], n: int): Stream[T] =
 proc takeWhile*[T](xs: Stream[T], p: T -> bool): Stream[T] =
   ## Takes elements while `p` is true
   xs.foldRight(() => T.empty(), (x: T, y: () -> Stream[T]) => (() => (if x.p: cons(() => x, y) else: T.empty)))
-    
+
 proc dropWhile*[T](xs: Stream[T], p: T -> bool): Stream[T] =
   ## Drops elements while `p` is true
   if xs.k == snkEmpty or not xs.h().p:
     xs
   else:
     xs.t().dropWhile(p)
-    
+
 proc forAll*[T](xs: Stream[T], p: T -> bool): bool =
   ## Checks if `p` returns true for all elements in stream
   case xs.k
@@ -156,3 +156,6 @@ proc flatMap*[T,U](xs: Stream[T], f: T -> Stream[U]): Stream[U] =
 template elemType*(v: Stream): typedesc =
   ## Part of ``do notation`` contract
   type(v.head)
+
+proc point*[T](v: () -> T, t: typedesc[Stream[T]]): Stream[T] =
+  cons(v, () => T.empty)

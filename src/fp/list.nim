@@ -294,5 +294,5 @@ template elemType*(v: List): typedesc =
   ## Part of ``do notation`` contract
   type(v.head)
 
-proc point*[T](t: typedesc[List[T]], v: T): List[T] =
+proc point*[T](v: T, t: typedesc[List[T]]): List[T] =
   v ^^ Nil[T]()

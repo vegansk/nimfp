@@ -29,6 +29,8 @@ suite "Option ADT":
     check: s.get == "test"
     expect(AssertionError): discard n.get == 10
 
+    check: 1.point(Option) == 1.some
+
   test "Map":
     let f = (x: int) => $x
     check: 100500.some.map(f) == some("100500")

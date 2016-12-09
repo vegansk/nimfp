@@ -63,6 +63,9 @@ suite "Either ADT":
     check: "error".left(1.rightS).join == "error".left(int)
     check: ("error".left(int)).rightS.join == "error".left(int)
 
+    check: 1.point(EitherS[int]) == 1.rightS
+    check: 1.point(EitherE[int]) == 1.rightE
+
   test "Map":
     check: r.map(x => x * 2) == 20.rightS
     check: l.map(x => x * 2) != 20.rightS

@@ -13,6 +13,8 @@ suite "List ADT":
     check: 1^^2^^3^^4^^5^^Nil[int]() == lst
     check: ["a", "b"].asList != ["a", "b", "c"].asList
 
+    check: 1.point(List) == [1].asList
+
   test "Fold operations":
     let lst = lc[x|(x <- 1..4),int].asList
 

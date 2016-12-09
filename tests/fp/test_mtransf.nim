@@ -11,6 +11,7 @@ suite "Monad transformers":
     let v = optionT(1.some.some)
     check: v.getOrElse(2) == 1.some
     check: v.map(v => $v).getOrElse("") == "1".some
+    check: v.flatMapF((v: int) => ($v).some).getOrElse("") == "1".some
     check: v.flatMap((v: int) => optionT(($v).some.some)).getOrElse("") == "1".some
 
     proc getArticle(id: int): Option[Option[string]] =
@@ -34,6 +35,7 @@ suite "Monad transformers":
     let v = optionT(1.some.rightS)
     check: v.getOrElse(2) == 1.rightS
     check: v.map(v => $v).getOrElse("") == "1".rightS
+    check: v.flatMapF((v: int) => ($v).rightS).getOrElse("") == "1".rightS
     check: v.flatMap((v: int) => optionT(($v).some.rightS)).getOrElse("") == "1".rightS
 
     proc getArticle(id: int): EitherS[Option[string]] =
@@ -57,13 +59,14 @@ suite "Monad transformers":
     let v = optionT([1.some].asList)
     check: v.getOrElse(2) == [1].asList
     check: v.map(v => $v).getOrElse("") == ["1"].asList
+    check: v.flatMapF((v: int) => [$v].asList).getOrElse("") == ["1"].asList
     check: v.flatMap((v: int) => optionT([($v).some].asList)).getOrElse("") == ["1"].asList
 
     proc getArticle(id: int): List[Option[string]] =
       if id == 0:
         Nil[Option[string]]()
       else:
-        List[Option[string]].point(($id).some)
+        ($id).some.point(List)
     let articles = act do:
       a1 <- optionT(getArticle(1))
       a2 <- optionT(getArticle(2))

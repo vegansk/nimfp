@@ -2,3 +2,4 @@ nimcache
 bin
 build
 *.log
+.#*.*
