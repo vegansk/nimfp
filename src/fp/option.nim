@@ -1,4 +1,7 @@
-import future, strutils
+import future,
+       strutils,
+       classy,
+       ./kleisli
 
 {.experimental.}
 
@@ -177,3 +180,5 @@ template elemType*(v: Option): typedesc =
 
 proc point*[A](v: A, t: typedesc[Option[A]]): Option[A] =
   v.some
+
+instance KleisliInst, Option[_], exporting(_)

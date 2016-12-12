@@ -1,4 +1,9 @@
-import future, list, option, boost.types
+import future,
+       boost.types,
+       classy,
+       ./list,
+       ./option,
+       ./kleisli
 
 {.experimental.}
 
@@ -297,3 +302,5 @@ template elemType*(v: Either): typedesc =
 
 proc point*[E,A](v: A, e: typedesc[Either[E,A]]): Either[E,A] =
   v.right(E)
+
+instance KleisliInst, E => Either[E,_], exporting(_)

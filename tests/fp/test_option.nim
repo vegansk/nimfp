@@ -109,3 +109,9 @@ suite "Option ADT":
 
     check: 1.some.zip("foo".some) == (1, "foo").some
     check: 1.some.zip(string.none) == (int, string).none
+
+  test "Kleisli":
+    let f = (v: int) => (v + 1).some
+    let g = (v: int) => (v * 100).some
+    check: 4.some >>= (f >=> g) == 500.some
+

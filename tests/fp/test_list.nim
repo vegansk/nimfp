@@ -98,3 +98,8 @@ suite "List ADT":
       asList(1, 2, 3).traverse(f)
 
     discard g()
+
+  test "Kleisli":
+    let f = (v: int) => asList(v, v + 1, v + 2)
+    let g = (v: int) => asList(v, v * 2, v * 3)
+    check: 1.point(List) >>= (f >=> g) == asList(1, 2, 3, 2, 4, 6, 3, 6, 9)

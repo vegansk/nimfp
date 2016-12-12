@@ -1,4 +1,7 @@
-import future, option
+import future,
+       option,
+       classy,
+       ./kleisli
 
 {.experimental.}
 
@@ -296,3 +299,5 @@ template elemType*(v: List): typedesc =
 
 proc point*[T](v: T, t: typedesc[List[T]]): List[T] =
   v ^^ Nil[T]()
+
+instance KleisliInst, List[_], exporting(_)

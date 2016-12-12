@@ -196,3 +196,8 @@ suite "Either ADT":
       1.rightE
     check: eres == 1.rightE
 
+  test "Kleisli ops":
+    let f = (v: int) => (v + 1).rightS
+    let g = (v: int) => (v * 100).rightS
+    check: 4.rightS >>= (f >=> g) == 500.rightS
+

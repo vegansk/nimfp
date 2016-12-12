@@ -46,3 +46,10 @@ suite "Functions":
     check: f3.curried().flip()(1)("a")("b") == "a1b"
     check: f3.curried()("a").flip()("b")(1) == "a1b"
     check: f3.curried().flip().uncurried3()(1, "a", "b") == "a1b"
+
+  test "Generics":
+    proc id[T](v: T, i: int): List[T] =
+      if i <= 0: Nil[T]()
+      else: v ^^ id(v, i - 1)
+
+    let ones = id[int].curried()(1)
