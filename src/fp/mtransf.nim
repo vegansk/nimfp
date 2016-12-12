@@ -22,6 +22,9 @@ typeclass OptionTInst, [F[_], OptionTF[_]], exported:
   proc getOrElse[A](o: OptionTF[A], v: A): F[A] =
     o.run.map((o: Option[A]) => o.getOrElse(v))
 
+  proc getOrElse[A](o: OptionTF[A], f: () -> A): F[A] =
+    o.run.map((o: Option[A]) => o.getOrElse(f))
+
   proc map[A,B](o: OptionTF[A], f: A -> B): OptionTF[B] =
     optionT(o.run.map((o: Option[A]) => o.map(f)))
 
