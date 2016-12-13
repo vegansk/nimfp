@@ -260,7 +260,7 @@ proc whileM*[E,A](a: A, cond: A -> Either[E, bool], body: A -> Either[E, A]): Ei
 
 proc whileM*[E](cond: () -> Either[E, bool], body: () -> Either[E, Unit]): Either[E, Unit] =
   ## Executes the body while `cond` returns ``true.right(E)``
-  whileM((), _ => cond(), _ => body())
+  whileM[E, Unit]((), _ => cond(), _ => body())
 
 proc toUnit*[E,A](e: Either[E,A]): Either[E, Unit] =
   ## Discards the Either's value

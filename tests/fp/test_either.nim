@@ -173,6 +173,16 @@ suite "Either ADT":
     check: whileRes == 0.rightS
     check: whileM("error", (v: string) => v.left(bool), (v: string) => v.rightS) == "error".left(string)
 
+    # whileM - convenience wrapper
+    var iters = 0
+    let whileRes2 = whileM() do () -> auto:
+      (iters < 3).rightS
+    do () -> auto:
+      iters.inc
+      ().rightS
+    check: whileRes2 == ().rightS
+    check: iters == 3
+
     check: 1.rightE.run == 1
     expect(ValueError):
       discard newException(ValueError, "error").left(int).run
