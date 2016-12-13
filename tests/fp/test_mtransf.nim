@@ -82,3 +82,5 @@ suite "Monad transformers":
   test "Misc functions":
     check: string.none.some.optionT.getOrElse("1") == "1".some
     check: string.none.some.optionT.getOrElse(() => "1") == "1".some
+
+    check: string.none.rightS.optionT.getOrElseF(() => "Error".left(string)) == "Error".left(string)
