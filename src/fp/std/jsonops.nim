@@ -1,5 +1,6 @@
 import json,
        future,
+       typetraits,
        ../either,
        ../option
 
@@ -42,10 +43,17 @@ proc value*[T](t: typedesc[T], n: JsonNode): EitherS[T] =
     tryS do() -> auto:
       JInt.checkKind
       n.getNum.int
-  else:
+  elif t is string:
     tryS do() -> auto:
       JString.checkKind
       n.getStr
+  elif t is bool:
+    tryS do() -> auto:
+      JBool.checkKind
+      n.getBVal
+  else:
+    proc `$`[T](some:typedesc[T]): string = name(T)
+    {.fatal: "Can't get value of type " & $T}
 
 proc mvalue*[T](t: typedesc[T]): Option[JsonNode] -> EitherS[Option[T]] =
   (n: Option[JsonNode]) => (if n.isDefined: value(T, n.get).map((v: T) => v.some) else: T.none.rightS)

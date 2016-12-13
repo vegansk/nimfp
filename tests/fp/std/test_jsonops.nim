@@ -9,6 +9,7 @@ suite "std.json":
 {
   "int": 123,
   "str": "Hello!",
+  "bool": true,
   "obj": {
     "int": 20
   }
@@ -31,3 +32,4 @@ suite "std.json":
       mget("int") >=>
       mvalue(int)
     ) == 20.some.rightS
+    check: value(bool, doc["bool"]) == true.rightS
