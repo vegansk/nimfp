@@ -99,6 +99,13 @@ suite "List ADT":
 
     discard g()
 
+  test "Traversable":
+    check: asList(asList(1)) == asList(1)
+    check: asList(1.some) == asList(1)
+    check: asList([1.some].asList) == [1.some].asList
+    when compiles(asList(1.some) == [1.some].asList):
+      check: false
+
   test "Kleisli":
     let f = (v: int) => asList(v, v + 1, v + 2)
     let g = (v: int) => asList(v, v * 2, v * 3)

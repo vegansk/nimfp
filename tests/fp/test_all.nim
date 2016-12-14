@@ -8,5 +8,6 @@ import fp,
        ./test_forcomp,
        ./test_forcomp_bind,
        ./test_mtransf,
+       ./test_iterable,
 
        ./std/test_jsonops

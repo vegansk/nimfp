@@ -206,6 +206,9 @@ suite "Either ADT":
       1.rightE
     check: eres == 1.rightE
 
+  test "Traversable":
+    check: asList(1.rightS) == asList(1)
+
   test "Kleisli ops":
     let f = (v: int) => (v + 1).rightS
     let g = (v: int) => (v * 100).rightS

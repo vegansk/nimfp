@@ -287,6 +287,15 @@ proc asList*[T](xs: varargs[T]): List[T] =
       Cons(xs[i], initListImpl(i+1, xs))
   initListImpl(0, xs)
 
+proc asList*[T](xs: List[T]): List[T] =
+  xs
+
+proc asList*[T](o: Option[T]): List[T] =
+  if o.isEmpty:
+    Nil[T]()
+  else:
+    o.get ^^ Nil[T]()
+
 proc asSeq*[T](xs: List[T]): seq[T] =
   ## Converts list to sequence
   var s: seq[T] = @[]

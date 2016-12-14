@@ -76,7 +76,7 @@ suite "Monad transformers":
     let badArticles = act do:
       a <- articles
       bad <- optionT(getArticle(0))
-      [a[0], a[1], a[2], bad].asList.some.asList.optionT
+      [[a[0], a[1], a[2], bad].asList.some].asList.optionT
     check: badArticles.run == Nil[Option[List[string]]]()
 
   test "Misc functions":

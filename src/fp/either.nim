@@ -296,6 +296,13 @@ proc asEitherE*[E,A](e: Either[E,A]): EitherE[A] =
   ## Converts Either to EitherE
   e.mapLeft((err: E) => newException(Exception, $err))
 
+proc asList*[E,A](e: Either[E,A]): List[A] =
+  ## Converts Either to List
+  if e.isLeft:
+    Nil[A]()
+  else:
+    asList(e.get)
+
 template elemType*(v: Either): typedesc =
   ## Part of ``do notation`` contract
   type(v.get)

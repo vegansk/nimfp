@@ -6,6 +6,7 @@ import fp.option,
        fp.stream,
        fp.forcomp,
        fp.mtransf,
+       fp.iterable,
 
        fp.std.jsonops
 
@@ -17,5 +18,6 @@ export option,
        stream,
        forcomp,
        mtransf,
+       iterable,
 
        jsonops
