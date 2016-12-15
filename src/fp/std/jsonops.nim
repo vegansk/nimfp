@@ -2,7 +2,8 @@ import json,
        future,
        typetraits,
        ../either,
-       ../option
+       ../option,
+       ../list
 
 proc mget*(n: JsonNode, key: string|int): EitherS[Option[JsonNode]] =
   ## Returns the child node if it exists, or none.
@@ -58,3 +59,19 @@ proc value*[T](t: typedesc[T], n: JsonNode): EitherS[T] =
 proc mvalue*[T](t: typedesc[T]): Option[JsonNode] -> EitherS[Option[T]] =
   (n: Option[JsonNode]) => (if n.isDefined: value(T, n.get).map((v: T) => v.some) else: T.none.rightS)
 
+type
+  Jsonable* = concept t
+    %t is JsonNode
+
+proc mjson*[T: Jsonable](v: T): Option[JsonNode] =
+  (%v).some
+
+proc mjson*[T: Jsonable](v: Option[T]): Option[JsonNode] =
+  v.map(v => %v)
+
+proc toJsonObject*(xs: List[(string, Option[JsonNode])]): JsonNode =
+  var res = newJObject()
+  xs.forEach(
+    (v: (string, Option[JsonNode])) => (if v[1].isDefined: res[v[0]] = v[1].get)
+  )
+  return res

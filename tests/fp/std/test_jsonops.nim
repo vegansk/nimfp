@@ -33,3 +33,9 @@ suite "std.json":
       mvalue(int)
     ) == 20.some.rightS
     check: value(bool, doc["bool"]) == true.rightS
+  test "toJson":
+    check: [
+      ("a", 1.mjson),
+      ("b", "a".mjson),
+      ("c", int64.none.mjson),
+    ].asList.toJsonObject == %*{ "a": 1, "b": "a" }
