@@ -10,6 +10,7 @@ suite "std.json":
   "int": 123,
   "str": "Hello!",
   "bool": true,
+  "float": 1.2,
   "obj": {
     "int": 20
   }
@@ -27,12 +28,14 @@ suite "std.json":
     check: value(string, doc["int"]).isLeft
     check: value(string, doc["str"]) == "Hello!".rightS
     check: value(int, doc["str"]).isLeft
+    check: value(float, doc["float"]) == 1.2.rightS
     check: doc.some.rightS >>= (
       mget("obj") >=>
       mget("int") >=>
       mvalue(int)
     ) == 20.some.rightS
     check: value(bool, doc["bool"]) == true.rightS
+
   test "toJson":
     check: [
       ("a", 1.mjson),

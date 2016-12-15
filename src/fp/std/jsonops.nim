@@ -40,14 +40,18 @@ proc value*[T](t: typedesc[T], n: JsonNode): EitherS[T] =
   template checkKind(nKind: JsonNodeKind): untyped =
     if n.kind != nKind:
       raise newException(ValueError, "Can't get Json node's value of kind " & $nKind & ", node's kind is " & $n.kind)
-  when t is int:
+  when t is int or t is int64:
     tryS do() -> auto:
       JInt.checkKind
-      n.getNum.int
+      n.getNum.T
   elif t is string:
     tryS do() -> auto:
       JString.checkKind
       n.getStr
+  elif t is float:
+    tryS do() -> auto:
+      JFloat.checkKind
+      n.getFNum
   elif t is bool:
     tryS do() -> auto:
       JBool.checkKind
