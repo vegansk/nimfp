@@ -208,6 +208,9 @@ proc traverse*[E, A, B](
   else:
     f(opt.get).map((b: B) => b.some)
 
+proc sequence*[E, A](oea: Option[Either[E, A]]): Either[E, Option[A]] =
+  oea.traverse((ea: Either[E, A]) => ea)
+
 proc forEach*[E,A](a: Either[E,A], f: A -> void): void =
   ## Applies `f` to the Either's value if it's right
   if a.isRight:

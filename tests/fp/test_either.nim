@@ -154,6 +154,11 @@ suite "Either ADT":
     check: 1.some.traverse(rightFunc) == true.some.rightS
     check: 1.some.traverse(leftFunc) == "foo".left(Option[bool])
 
+    # sequence with Option
+    check: 1.rightS.some.sequence == 1.some.rightS
+    check: "foo".left(int).some.sequence == "foo".left(Option[int])
+    check: EitherS[int].none.sequence == int.none.rightS
+
   test "Traverse with List should allow to properly infer gcsafe":
     proc f(i: int): auto = i.rightS
 
