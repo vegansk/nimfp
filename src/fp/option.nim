@@ -173,6 +173,11 @@ proc traverse*[T, U](ts: seq[T], f: T -> Option[U]): Option[seq[U]] =
       return none(seq[U])
   return acc.some
 
+proc asSeq*[T](o: Option[T]): seq[T] =
+  if o.isDefined:
+    @[o.get]
+  else:
+    @[]
 
 template elemType*(v: Option): typedesc =
   ## Part of ``do notation`` contract
