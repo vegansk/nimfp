@@ -36,3 +36,6 @@ task test_int, "Run all tests - internal":
 
 task test, "Run all tests":
   dep test_int
+
+task test_either, "Run Either tests":
+  test "either"

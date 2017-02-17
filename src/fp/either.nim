@@ -157,6 +157,17 @@ when compiles(getCurrentException()):
     ## Transforms exception to EitherE type
     (try: f() except: getCurrentException().left(A))
 
+  proc notVoid[A](a: A) = discard
+
+  template tryET*(body: untyped): untyped =
+    ## Combination of flatTryS and tryS
+    when type(body) is EitherE:
+      flatTryE do() -> auto:
+        body
+    else:
+      tryE do() -> auto:
+        body
+
   proc tryS*[A](f: () -> A): EitherS[A] =
     ## Transforms exception to EitherS type
     (try: f().rightS except: getCurrentExceptionMsg().left(A))
@@ -164,6 +175,15 @@ when compiles(getCurrentException()):
   proc flatTryS*[A](f: () -> EitherS[A]): EitherS[A] =
     ## Transforms exception to EitherS type
     (try: f() except: getCurrentExceptionMsg().left(A))
+
+  template tryST*(body: untyped): untyped =
+    ## Combination of flatTryE and tryE
+    when type(body) is EitherS:
+      flatTryS do() -> auto:
+        body
+    else:
+      tryS do() -> auto:
+        body
 
   proc run*[E,A](e: Either[E,A]): A =
     ## Returns right value or raises the error contained
