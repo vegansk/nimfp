@@ -3,7 +3,8 @@ import future,
        classy,
        ./list,
        ./option,
-       ./kleisli
+       ./kleisli,
+       macros
 
 {.experimental.}
 
@@ -157,16 +158,21 @@ when compiles(getCurrentException()):
     ## Transforms exception to EitherE type
     (try: f() except: getCurrentException().left(A))
 
-  proc notVoid[A](a: A) = discard
-
-  template tryET*(body: untyped): untyped =
-    ## Combination of flatTryS and tryS
+  template tryETImpl(body: typed): untyped =
     when type(body) is EitherE:
       flatTryE do() -> auto:
         body
     else:
       tryE do() -> auto:
         body
+
+  macro tryET*(body: untyped): untyped =
+    ## Combination of flatTryS and tryS
+    var b = if body.kind == nnkDo: body[^1] else: body
+    result = quote do:
+      tryETImpl((block:
+        `b`
+      ))
 
   proc tryS*[A](f: () -> A): EitherS[A] =
     ## Transforms exception to EitherS type
@@ -176,14 +182,21 @@ when compiles(getCurrentException()):
     ## Transforms exception to EitherS type
     (try: f() except: getCurrentExceptionMsg().left(A))
 
-  template tryST*(body: untyped): untyped =
-    ## Combination of flatTryE and tryE
+  template trySTImpl(body: untyped): untyped =
     when type(body) is EitherS:
       flatTryS do() -> auto:
         body
     else:
       tryS do() -> auto:
         body
+
+  macro tryST*(body: untyped): untyped =
+    ## Combination of flatTryS and tryS
+    var b = if body.kind == nnkDo: body[^1] else: body
+    result = quote do:
+      trySTImpl((block:
+        `b`
+      ))
 
   proc run*[E,A](e: Either[E,A]): A =
     ## Returns right value or raises the error contained
