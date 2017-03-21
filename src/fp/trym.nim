@@ -2,6 +2,8 @@ import ./either,
        future,
        macros
 
+export either
+
 type Try*[A] = EitherE[A]
   ## The type representing either exception or successfully
   ## computed value

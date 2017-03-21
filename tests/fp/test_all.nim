@@ -8,6 +8,7 @@ import fp,
        ./test_stream,
        ./test_forcomp,
        ./test_forcomp_bind,
+       ./test_futurem,
        ./test_mtransf,
        ./test_iterable,
 
