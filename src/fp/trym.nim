@@ -46,7 +46,7 @@ template tryMImpl(body: typed): untyped =
       ()
 
 macro tryM*(body: untyped): untyped =
-  ## Combination of flatTryS and tryS
+  ## Executes `body` and places it's result in the ``Try`` container
   var b = if body.kind == nnkDo: body[^1] else: body
   result = quote do:
     tryMImpl((block:
