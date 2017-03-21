@@ -1,6 +1,7 @@
 import fp,
        ./test_option,
        ./test_either,
+       ./test_trym,
        ./test_list,
        ./test_map,
        ./test_function,
