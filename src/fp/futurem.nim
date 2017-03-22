@@ -13,11 +13,14 @@ export asyncdispatch
 proc map*[T,U](v: Future[T], f: T -> U): Future[U] =
   var res = newFuture[U]()
   v.callback = () => (block:
-    let r = tryM(f(v.read))
-    if r.isFailure:
-      res.fail(r.getError)
+    if v.failed:
+      res.fail(v.readError)
     else:
-      res.complete(r.get)
+      let r = tryM f(v.read)
+      if r.isFailure:
+        res.fail(r.getError)
+      else:
+        res.complete(r.get)
   )
 
   return res
@@ -25,17 +28,15 @@ proc map*[T,U](v: Future[T], f: T -> U): Future[U] =
 proc flatMap*[T,U](v: Future[T], f: T -> Future[U]): Future[U] =
   var res = newFuture[U]()
   v.callback = () => (block:
-    let r = tryM(f(v.read))
-    if r.isFailure:
-      res.fail(r.getError)
+    if v.failed:
+      res.fail(v.readError)
     else:
-      let newF = r.get
+      let newF = f(v.read)
       newF.callback = () => (block:
-        let fr = tryM(newF.read)
-        if fr.isFailure:
-          res.fail(fr.getError)
+        if newF.failed:
+          res.fail(newF.readError)
         else:
-          res.complete(fr.get)
+          res.complete(newF.read)
       )
   )
 

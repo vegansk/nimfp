@@ -44,5 +44,4 @@ suite "Future":
     check: x2.flattenF.run.get == 1
 
     let x3 = future("Oops".failure(int))
-    # See https://github.com/nim-lang/Nim/blob/master/lib/pure/includes/asyncfutures.nim#L152
-    check: x3.flattenF.run.getErrorMessage[0..3] == "Oops"
+    check: x3.flattenF.run.getErrorMessage == "Oops"
