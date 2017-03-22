@@ -81,4 +81,13 @@ proc run*[T](f: Future[T]): Try[T] =
 proc join*[T](f: Future[Future[T]]): Future[T] =
   f.flatMap(id)
 
+proc flattenF*[T](f: Future[Try[T]]): Future[T] =
+  f.flatMap do(v: Try[T]) -> auto:
+    var res = newFuture[T]()
+    if v.isFailure:
+      res.fail(v.getError)
+    else:
+      res.complete(v.get)
+    return res
+
 instance KleisliInst, Future[_], exporting(_)

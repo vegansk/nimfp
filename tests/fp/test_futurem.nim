@@ -39,3 +39,10 @@ suite "Future":
   test "Utilities":
     let x1 = future(future(1))
     check: x1.join.run.get == 1
+
+    let x2 = future(1.success)
+    check: x2.flattenF.run.get == 1
+
+    let x3 = future("Oops".failure(int))
+    # See https://github.com/nim-lang/Nim/blob/master/lib/pure/includes/asyncfutures.nim#L152
+    check: x3.flattenF.run.getErrorMessage[0..3] == "Oops"
