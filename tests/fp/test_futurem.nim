@@ -35,3 +35,7 @@ suite "Future":
       yield x * 2
     expect(Exception):
       discard y2.run.get
+
+  test "Utilities":
+    let x1 = future(future(1))
+    check: x1.join.run.get == 1

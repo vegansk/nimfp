@@ -4,7 +4,8 @@ import future,
        ./list,
        ./option,
        ./kleisli,
-       macros
+       macros,
+       ./function
 
 {.experimental.}
 
@@ -147,7 +148,7 @@ proc map2F*[A, B, C, E](
 
 proc join*[E,A](e: Either[E, Either[E,A]]): Either[E,A] =
   ## Flattens Either's value
-  e.flatMap((v: Either[E,A]) => v)
+  e.flatMap(id)
 
 when compiles(getCurrentException()):
   proc tryE*[A](f: () -> A): EitherE[A] =

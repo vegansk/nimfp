@@ -48,8 +48,8 @@ suite "Functions":
     check: f3.curried().flip().uncurried3()(1, "a", "b") == "a1b"
 
   test "Generics":
-    proc id[T](v: T, i: int): List[T] =
+    proc mkList[T](v: T, i: int): List[T] =
       if i <= 0: Nil[T]()
-      else: v ^^ id(v, i - 1)
+      else: v ^^ mkList(v, i - 1)
 
-    let ones = id[int].curried()(1)
+    let ones = mkList[int].curried()(1)

@@ -5,7 +5,8 @@ import future,
        classy,
        fp.kleisli,
        boost.types,
-       macros
+       macros,
+       fp.function
 
 export asyncdispatch
 
@@ -31,7 +32,7 @@ proc flatMap*[T,U](v: Future[T], f: T -> Future[U]): Future[U] =
       let newF = r.get
       newF.callback = () => (block:
         let fr = tryM(newF.read)
-        if fr.isFailed:
+        if fr.isFailure:
           res.fail(fr.getError)
         else:
           res.complete(fr.get)
@@ -76,5 +77,8 @@ proc run*[T](f: Future[T]): Try[T] =
   while not f.finished:
     asyncdispatch.poll(10)
   f.value.get
+
+proc join*[T](f: Future[Future[T]]): Future[T] =
+  f.flatMap(id)
 
 instance KleisliInst, Future[_], exporting(_)

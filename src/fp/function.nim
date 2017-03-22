@@ -69,3 +69,5 @@ proc flip*[A,B,C](f: Func2[B,A,C]): Func2[A,B,C] =
 
 proc flip*[A,B,C](f: Curried2[B,A,C]): Curried2[A,B,C] =
   (a: A) => ((b: B) => f(b)(a))
+
+proc id*[A](v: A): A {.procvar.} = v

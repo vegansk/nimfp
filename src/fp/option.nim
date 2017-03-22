@@ -1,7 +1,8 @@
 import future,
        strutils,
        classy,
-       ./kleisli
+       ./kleisli,
+       ./function
 
 {.experimental.}
 
@@ -90,7 +91,7 @@ proc flatMap*[T,U](o: Option[T], f: T -> Option[U]): Option[U] =
 
 proc join*[T](mmt: Option[Option[T]]): Option[T] =
   ## Flattens the option
-  mmt.flatMap((mt: Option[T]) => mt)
+  mmt.flatMap(id)
 
 proc get*[T](o: Option[T]): T =
   ## Returns option's value if defined, or fail
