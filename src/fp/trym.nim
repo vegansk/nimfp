@@ -90,3 +90,13 @@ proc recoverWith*[A](v: Try[A], f: ref Exception -> Try[A]): Try[A] =
     f(v.getError)
   else:
     v
+
+proc mapErrorMessage*[A](v: Try[A], f: string -> string): Try[A] =
+  ## Transforms the error message using `f`
+  if v.isFailure:
+    var errCopy: ref Exception
+    deepCopy(errCopy, v.getError)
+    errCopy.msg = f(errCopy.msg)
+    errCopy.failure(A)
+  else:
+    v

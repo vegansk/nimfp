@@ -40,3 +40,11 @@ suite "Try type":
     let x4 = join tryM do:
       "Oops".failure(int)
     check: x4.isFailure and x4.getErrorMessage == "Oops"
+
+  test "Utilities":
+    let x = "Oops".failure(int)
+    let y = x.mapErrorMessage(v => "Error: " & v)
+    check: y.isFailure
+    check: y.getErrorMessage == "Error: Oops"
+    check: x.getErrorStack == y.getErrorStack
+    echo y.getErrorStack

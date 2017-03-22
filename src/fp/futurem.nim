@@ -7,6 +7,8 @@ import future,
        boost.types,
        macros
 
+export asyncdispatch
+
 proc map*[T,U](v: Future[T], f: T -> U): Future[U] =
   var res = newFuture[U]()
   v.callback = () => (block:

@@ -1,9 +1,5 @@
 import unittest,
-       fp.futurem,
-       fp.forcomp,
-       fp.option,
-       fp.trym,
-       asyncdispatch
+       fp
 
 suite "Future":
   test "Initialization":
