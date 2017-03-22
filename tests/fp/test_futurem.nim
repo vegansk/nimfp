@@ -1,5 +1,6 @@
 import unittest,
-       fp
+       fp,
+       future
 
 suite "Future":
   test "Initialization":
@@ -45,3 +46,9 @@ suite "Future":
 
     let x3 = future("Oops".failure(int))
     check: x3.flattenF.run.getErrorMessage == "Oops"
+
+    var res = 1
+    var x4 = future(2)
+    x4.onComplete((v: Try[int]) => (res = v.get))
+    discard x4.run
+    check: res == 2

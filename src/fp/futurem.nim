@@ -91,4 +91,9 @@ proc flattenF*[T](f: Future[Try[T]]): Future[T] =
       res.complete(v.get)
     return res
 
+proc onComplete*[T](v: Future[T], f: Try[T] -> void) =
+  v.callback = () => (block:
+    f(v.value.get)
+  )
+
 instance KleisliInst, Future[_], exporting(_)
