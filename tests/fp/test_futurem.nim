@@ -21,6 +21,12 @@ suite "Future":
     check: x2.value.get.isFailure
     check: x2.value.get.getErrorMessage == "Oops"
 
+    let x3 = newFuture[void]()
+    x3.complete
+    check: x3.value.isDefined
+    check: x3.value.get.isSuccess
+    check: x3.value.get.get == ()
+
   test "Do notation":
     let y1 = act do:
       x <- future(3)

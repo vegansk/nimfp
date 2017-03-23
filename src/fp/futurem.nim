@@ -6,7 +6,8 @@ import future,
        fp.kleisli,
        boost.types,
        macros,
-       fp.function
+       fp.function,
+       boost.typeclasses
 
 export asyncdispatch
 
@@ -46,7 +47,16 @@ template elemType*(v: Future): typedesc =
   ## Part of ``do notation`` contract
   type(v.read)
 
-proc value*[T](f: Future[T]): Option[Try[T]] =
+proc value*(f: Future[void]): Option[Try[Unit]] =
+  if f.finished:
+    if f.failed:
+      f.readError.failure(Unit).some
+    else:
+      ().success.some
+  else:
+    none(Try[Unit])
+
+proc value*[T: NonVoid](f: Future[T]): Option[Try[T]] =
   if f.finished:
     if f.failed:
       f.readError.failure(T).some
@@ -59,7 +69,7 @@ proc unit*[T](v: T): Future[T] =
   result = newFuture[T]()
   result.complete(v)
 
-proc newFuture*[T](f: () -> T): Future[T] =
+proc newFuture*[T: NonVoid](f: () -> T): Future[T] =
   result = unit(()).map(_ => f())
 
 template futureImpl(body: typed): untyped =
@@ -74,7 +84,12 @@ macro future*(body: untyped): untyped =
       `b`
     ))
 
-proc run*[T](f: Future[T]): Try[T] =
+proc run*(f: Future[void]): Try[Unit] =
+  while not f.finished:
+    asyncdispatch.poll(10)
+  f.value.get
+
+proc run*[T: NonVoid](f: Future[T]): Try[T] =
   while not f.finished:
     asyncdispatch.poll(10)
   f.value.get
