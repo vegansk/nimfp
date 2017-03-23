@@ -55,12 +55,12 @@ proc value*[T](f: Future[T]): Option[Try[T]] =
   else:
     none(Try[T])
 
-proc unit*: Future[Unit] =
-  result = newFuture[Unit]()
-  result.complete(())
+proc unit*[T](v: T): Future[T] =
+  result = newFuture[T]()
+  result.complete(v)
 
 proc newFuture*[T](f: () -> T): Future[T] =
-  result = unit().map(_ => f())
+  result = unit(()).map(_ => f())
 
 template futureImpl(body: typed): untyped =
   newFuture do() -> auto:
