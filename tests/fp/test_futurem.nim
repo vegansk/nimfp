@@ -1,6 +1,7 @@
 import unittest,
        fp,
-       future
+       future,
+       boost.types
 
 suite "Future":
   test "Initialization":
@@ -43,6 +44,11 @@ suite "Future":
     expect(Exception):
       discard y2.run.get
 
+  test "Future[void] support":
+    check unit[void]().map(_ => 1).run.get == 1
+    check unit[void]().flatMap((_: Unit) => unit(1)).run.get == 1
+    check unit[void]().elemType is Unit
+
   test "Utilities":
     let x1 = future(future(1))
     check: x1.join.run.get == 1
@@ -58,3 +64,6 @@ suite "Future":
     x4.onComplete((v: Try[int]) => (res = v.get))
     discard x4.run
     check: res == 2
+
+    check: sleepAsync(200).map(_ => 1).timeout(100).run.get == int.none
+    check: sleepAsync(100).map(_ => 1).timeout(200).run.get == 1.some
