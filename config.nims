@@ -39,3 +39,6 @@ task test, "Run all tests":
 
 task test_either, "Run Either tests":
   test "either"
+
+task test_concurrent, "Run concurrent tests":
+  test "concurrent"

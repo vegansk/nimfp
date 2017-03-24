@@ -11,5 +11,6 @@ import fp,
        ./test_futurem,
        ./test_mtransf,
        ./test_iterable,
+       ./test_concurrent,
 
        ./std/test_jsonops
