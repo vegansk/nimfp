@@ -1,4 +1,8 @@
-import list, future, option, boost.data.rbtree, sequtils
+import ./list,
+       future,
+       ./option,
+       boost.data.rbtree,
+       sequtils
 
 type
   Map*[K,V] = RBTree[K,V]

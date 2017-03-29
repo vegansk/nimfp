@@ -1,5 +1,5 @@
 import future,
-       option,
+       ./option,
        classy,
        ./kleisli
 

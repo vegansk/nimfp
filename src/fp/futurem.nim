@@ -1,12 +1,12 @@
 import future,
        asyncdispatch,
-       fp.trym,
-       fp.option,
+       ./trym,
+       ./option,
        classy,
-       fp.kleisli,
+       ./kleisli,
        boost.types,
        macros,
-       fp.function,
+       ./function,
        boost.typeclasses
 
 export asyncdispatch

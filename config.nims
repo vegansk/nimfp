@@ -1,3 +1,5 @@
+import ospaths
+
 srcdir = "src"
 
 template dep(name: untyped): untyped =
@@ -31,6 +33,12 @@ proc test(name: string) =
   --run
   buildBase true, "bin/test_" & name, "tests/fp/test_" & name
 
+proc example(bin: string, name: string) =
+  if not dirExists "bin":
+    mkDir "bin"
+  --run
+  buildBase false, "bin/ex_" & bin, "examples" / name
+
 task test_int, "Run all tests - internal":
   test "all"
 
@@ -42,3 +50,6 @@ task test_either, "Run Either tests":
 
 task test_concurrent, "Run concurrent tests":
   test "concurrent"
+
+task ex_httpactor, "Run httpactor example":
+  example "httpactor", "httpactor" / "main"

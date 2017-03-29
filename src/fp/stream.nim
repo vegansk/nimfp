@@ -1,4 +1,7 @@
-import future, option, list, function
+import future,
+       ./option,
+       ./list,
+       ./function
 
 type
   StreamNodeKind = enum
