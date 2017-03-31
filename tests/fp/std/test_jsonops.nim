@@ -1,7 +1,9 @@
 import unittest,
        future,
        fp,
-       json
+       json,
+       boost.typeutils,
+       boost.jsonserialize
 
 suite "std.json":
 
@@ -42,3 +44,14 @@ suite "std.json":
       ("b", "a".mjson),
       ("c", int64.none.mjson),
     ].asList.toJsonObject == %*{ "a": 1, "b": "a" }
+
+  test "boost serialization test":
+    data Test, json:
+      a = "test".some
+      b = asList(1, 2)
+
+    check: Test.fromJson(initTest().toJson()).a == "test".some
+    check: Test.fromJson(initTest(a = string.none).toJson()).a == string.none
+    check: Test.fromJson(initTest().toJson()).b == asList(1, 2)
+
+    echo initTest().toJson()

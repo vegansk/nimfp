@@ -3,7 +3,8 @@ import json,
        typetraits,
        ../either,
        ../option,
-       ../list
+       ../list,
+       boost.jsonserialize
 
 proc mget*(n: JsonNode, key: string|int): EitherS[Option[JsonNode]] =
   ## Returns the child node if it exists, or none.
@@ -79,3 +80,36 @@ proc toJsonObject*(xs: List[(string, Option[JsonNode])]): JsonNode =
     (v: (string, Option[JsonNode])) => (if v[1].isDefined: res[v[0]] = v[1].get)
   )
   return res
+
+proc toJson*[T](v: Option[T]): JsonNode =
+  mixin toJson
+  if v.isDefined:
+    v.get.toJson
+  else:
+    nil
+
+proc fromJson*[T](_: typedesc[Option[T]], n: JsonNode): Option[T] =
+  mixin fromJson
+  if n.isNil or n.kind == JNull:
+    T.none
+  else:
+    T.fromJson(n).some
+
+proc toJson*[T](v: List[T]): JsonNode =
+  mixin toJson
+  let res = newJArray()
+  v.forEach do(v: T) -> void:
+    let n = v.toJson
+    if n.isNil:
+      res.add(newJNull())
+    else:
+      res.add(n)
+  return res
+
+proc fromJson*[T](_: typedesc[List[T]], n: JsonNode): List[T] =
+  if n.isNil or n.kind != JArray:
+    raise newFieldException("Value of the node is not an array")
+  result = Nil[T]()
+  mixin fromJson
+  for i in countdown(n.len-1, 0):
+    result = Cons(T.fromJson(n[i]), result)
