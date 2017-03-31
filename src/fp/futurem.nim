@@ -165,4 +165,7 @@ proc timeout*[T](v: Future[T], timeout: int): Future[Option[T]] =
   )
   return res
 
+proc complete*(f: Future[void], v: Unit) =
+  complete(f)
+
 instance KleisliInst, Future[_], exporting(_)
