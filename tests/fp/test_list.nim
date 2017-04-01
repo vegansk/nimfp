@@ -32,6 +32,19 @@ suite "List ADT":
 
     check: Nil[int]().foldRight(100, (x, y) => x + y) == 100
 
+  test "Unfold operations":
+    proc divmod10(n: int): Option[(int, int)] =
+      if n == 0:
+          return none((int,int))
+      return some(( (n mod 10).int, n div 10))
+
+    proc toDigits(n: int): List[int] = unfoldLeft(divmod10,n)
+    proc toReversedDigits(n: int): List[int] = unfoldRight(divmod10,n)
+
+    let n = 12301230
+    check: toDigits(n) == [1,2,3,0,1,2,3,0].asList
+    check: toReversedDigits(n) == [0,3,2,1,0,3,2,1].asList
+
   test "Transformations":
     check: @[1, 2, 3].asList.traverse((x: int) => x.some) == @[1, 2, 3].asList.some
     check: @[1, 2, 3].asList.traverse((x: int) => (if x > 2: x.none else: x.some)) == List[int].none
