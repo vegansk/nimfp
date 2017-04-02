@@ -46,12 +46,12 @@ suite "std.json":
     ].asList.toJsonObject == %*{ "a": 1, "b": "a" }
 
   test "boost serialization test":
-    data Test, json:
+    data Test, json, show:
       a = "test".some
       b = asList(1, 2)
+      c = asMap({"a": 1, "b": 2})
 
     check: Test.fromJson(initTest().toJson()).a == "test".some
     check: Test.fromJson(initTest(a = string.none).toJson()).a == string.none
     check: Test.fromJson(initTest().toJson()).b == asList(1, 2)
-
-    echo initTest().toJson()
+    check: Test.fromJson(initTest().toJson()).c == asMap({"a": 1, "b": 2})

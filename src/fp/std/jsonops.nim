@@ -4,6 +4,7 @@ import json,
        ../either,
        ../option,
        ../list,
+       ../map,
        boost.jsonserialize
 
 proc mget*(n: JsonNode, key: string|int): EitherS[Option[JsonNode]] =
@@ -113,3 +114,26 @@ proc fromJson*[T](_: typedesc[List[T]], n: JsonNode): List[T] =
   mixin fromJson
   for i in countdown(n.len-1, 0):
     result = Cons(T.fromJson(n[i]), result)
+
+proc toJson*[T](v: Map[string,T]): JsonNode =
+  mixin toJson
+  let res = newJObject()
+  v.forEach do(v: (string,T)) -> void:
+    let val = v[1].toJson
+    if not val.isNil:
+      res[v[0]] = val
+  return res
+
+proc fromJson*[T](_: typedesc[Map[string,T]], n: JsonNode): Map[string,T] =
+  if n.isNil or n.kind != JObject:
+    raise newFieldException("Value of the node is not an object")
+  result = newMap[string,T]()
+  mixin fromJson
+  for k, v in n:
+    let val = T.fromJson(v)
+    when compiles(val.isNil):
+      if not val.isNil:
+        result = result.add((k, val))
+    else:
+      result = result.add((k, val))
+
