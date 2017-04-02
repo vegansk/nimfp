@@ -101,7 +101,7 @@ proc foldLeft*[T,U](xs: List[T], z: U, f: (U, T) -> U): U =
 
 # foldRight can be recursive, or realized via foldLeft.
 proc foldRight*[T,U](xs: List[T], z: U, f: (T, U) -> U): U =
-  ## Fold right operation. Can be defined via foldLeft (-d:foldRightViaLeft switch), or be recursive bu default.
+  ## Fold right operation. Can be defined via foldLeft (-d:foldRightViaLeft switch), or be recursive by default.
   when defined(foldRightViaLeft):
     foldLeft[T, U -> U](xs, (b: U) => b, (g: U -> U, x: T) => ((b: U) => g(f(x, b))))(z)
   else:
@@ -113,6 +113,23 @@ proc foldRightF*[T, U](xs: List[T], z: () -> U, f: (T, () -> U) -> U): U =
   ## Right fold over lists. Lazy in accumulator - allows for early termination.
   if xs.isEmpty: z()
   else: f(xs.head, () => xs.tail.foldRightF(z, f))
+
+# After bug https://github.com/nim-lang/Nim/issues/5647, remove item and seed from type signature
+proc unfoldLeft*[T, U](f: U -> Option[tuple[item: T, seed: U]], x:U): List[T] {. inline .}=
+    ## Build a List from the left from function f: T -> Option(T,T) and a seed of type T
+    result = Nil[T]()
+    var a = x
+    var b: T
+
+    var fa = f(a)
+    while fa.isDefined:
+        (b, a) = fa.get()
+        result = b ^^ result
+        fa = f(a)
+
+proc unfoldRight*[T, U](f: U -> Option[tuple[item: T, seed: U]], x:U): List[T] {. inline .}=
+    ## Build a List from the right from function f: T -> Option(T,T) and a seed of type T
+    unfoldLeft(f,x).reverse
 
 proc drop*(xs: List, n: int): List =
   ## Drops `n` first elements of the list
