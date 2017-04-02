@@ -34,33 +34,29 @@ suite "List ADT":
 
   test "Unfold operations":
     proc divmod10(n: int): Option[(int, int)] =
-      if n == 0:
-          return none((int,int))
-      return some(( (n mod 10).int, n div 10))
+      if n == 0: none((int,int))
+      else: some(( (n mod 10).int, n div 10))
 
-    proc toDigits(n: int): List[int] = unfoldLeft(divmod10,n)
-    proc toReversedDigits(n: int): List[int] = unfoldRight(divmod10,n)
+    check: unfoldLeft(divmod10,12301230) == [1,2,3,0,1,2,3,0].asList
+    check: unfoldRight(divmod10,12301230) == [0,3,2,1,0,3,2,1].asList
 
-    let n = 12301230
-    check: toDigits(n) == [1,2,3,0,1,2,3,0].asList
-    check: toReversedDigits(n) == [0,3,2,1,0,3,2,1].asList
-
-    let vowels: List[char] = ['a','e','i','o','u','y', 'A', 'E', 'I', 'O', 'U', 'Y'].asList
-    let s = "Is it a success?"
-
-    proc isHeadVowel(s: string): (Option[((char,bool), string)]) =
-      if s == "":
-        return none(((char,bool),string))
-      return some(
-        ((s[0],vowels.contains(s[0])), s[1..^1])
-        )
-    proc vowelToTrue(s: string): List[(char, bool)] = unfoldLeft(isHeadVowel,s)
-    proc vowelToTrueReversed(s: string): List[(char, bool)] = unfoldRight(isHeadVowel,s)
-
-    when compiles(vowelToTrue(s)):
-      check: true
-    when compiles(vowelToTrueReversed(s)):
-      check: true
+    proc unconsString(s: string): Option[(char, string)] =
+      if s == "": none((char, string))
+      else: some((s[0], s[1..^1]))
+    
+    check: unfoldLeft(unconsString,"Success !") == ['!', ' ', 's', 's', 'e', 'c', 'c', 'u', 'S'].asList
+    check: unfoldRight(unconsString,"Success !") == ['S', 'u', 'c', 'c', 'e', 's', 's', ' ', '!'].asList
+    
+    var global_count: int = 0
+    proc divmod10_count(n: int): Option[(int, int)] =
+      inc global_count
+      if n == 0: none((int,int))
+      else: some(( (n mod 10).int, n div 10))
+      
+    let _ = unfoldLeft(divmod10_count,12301230)
+    check: global_count == 9
+    let _ = unfoldRight(divmod10_count,12301230)
+    check: global_count == 18
 
   test "Transformations":
     check: @[1, 2, 3].asList.traverse((x: int) => x.some) == @[1, 2, 3].asList.some
