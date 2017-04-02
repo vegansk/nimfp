@@ -114,23 +114,22 @@ proc foldRightF*[T, U](xs: List[T], z: () -> U, f: (T, () -> U) -> U): U =
   if xs.isEmpty: z()
   else: f(xs.head, () => xs.tail.foldRightF(z, f))
 
-proc unfoldLeft*[T](f: T -> Option[(T, T)], x:T): List[T] {. inline .}=
+# After bug https://github.com/nim-lang/Nim/issues/5647, remove item and seed from type signature
+proc unfoldLeft*[T, U](f: U -> Option[tuple[item: T, seed: U]], x:U): List[T] {. inline .}=
     ## Build a List from the left from function f: T -> Option(T,T) and a seed of type T
     result = Nil[T]()
-    var a, b = x
+    var a = x
+    var b: T
 
-    while f(a).isDefined():
-        (b, a) = f(a).get()
+    var fa = f(a)
+    while fa.isDefined:
+        (b, a) = fa.get()
         result = b ^^ result
+        fa = f(a)
 
-proc unfoldRight*[T](f: T -> Option[(T, T)], x:T): List[T] {. inline .}=
+proc unfoldRight*[T, U](f: U -> Option[tuple[item: T, seed: U]], x:U): List[T] {. inline .}=
     ## Build a List from the right from function f: T -> Option(T,T) and a seed of type T
-    result = Nil[T]()
-    var a, b = x
-
-    while f(a).isDefined():
-        (b, a) = f(a).get()
-        result = result.append(b.asList)
+    unfoldLeft(f,x).reverse
 
 proc drop*(xs: List, n: int): List =
   ## Drops `n` first elements of the list

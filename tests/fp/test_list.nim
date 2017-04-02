@@ -45,6 +45,23 @@ suite "List ADT":
     check: toDigits(n) == [1,2,3,0,1,2,3,0].asList
     check: toReversedDigits(n) == [0,3,2,1,0,3,2,1].asList
 
+    let vowels: List[char] = ['a','e','i','o','u','y', 'A', 'E', 'I', 'O', 'U', 'Y'].asList
+    let s = "Is it a success?"
+
+    proc isHeadVowel(s: string): (Option[((char,bool), string)]) =
+      if s == "":
+        return none(((char,bool),string))
+      return some(
+        ((s[0],vowels.contains(s[0])), s[1..^1])
+        )
+    proc vowelToTrue(s: string): List[(char, bool)] = unfoldLeft(isHeadVowel,s)
+    proc vowelToTrueReversed(s: string): List[(char, bool)] = unfoldRight(isHeadVowel,s)
+
+    when compiles(vowelToTrue(s)):
+      check: true
+    when compiles(vowelToTrueReversed(s)):
+      check: true
+
   test "Transformations":
     check: @[1, 2, 3].asList.traverse((x: int) => x.some) == @[1, 2, 3].asList.some
     check: @[1, 2, 3].asList.traverse((x: int) => (if x > 2: x.none else: x.some)) == List[int].none
