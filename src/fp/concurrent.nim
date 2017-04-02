@@ -1,12 +1,14 @@
 import boost.types,
        boost.typeutils,
-       threadpool,
        ./futurem,
        ./option,
        ./trym,
        future,
-       deques,
-       locks
+       deques
+
+const hasThreads = compileOption("threads")
+when hasThreads:
+  import threadpool, locks
 
 type Strategy*[A] = proc(a: () -> A): () -> A
 
@@ -14,10 +16,11 @@ proc sequentalStrategy*[A](a: () -> A): () -> A {.procvar.} =
   let r = a()
   result = () => r
 
-proc spawnStrategy*[A](a: proc(): A {.gcsafe.}): () -> A {.procvar.} =
-  let r = spawn a()
-  result = proc(): auto =
-    return ^r
+when hasThreads:
+  proc spawnStrategy*[A](a: proc(): A {.gcsafe.}): () -> A {.procvar.} =
+    let r = spawn a()
+    result = proc(): auto =
+      return ^r
 
 proc asyncStrategy*[A](a: () -> A): () -> A {.procvar.} =
   let f = newFuture[A](a)
@@ -40,26 +43,27 @@ type Queue*[A] = ref object of RootObj
 
 type QueueImpl*[A] = proc(): Queue[A]
 
-type ChannelQueue[A] = ref object of Queue[A]
-  ch: Channel[A]
+when hasThreads:
+  type ChannelQueue[A] = ref object of Queue[A]
+    ch: Channel[A]
 
-proc channelQueue*[A](): Queue[A] {.procvar.} =
-  result = new(ChannelQueue[A])
-  result.init = proc(q: var Queue[A]) =
-    let chq = ChannelQueue[A](q)
-    chq.ch.open
-  result.put = proc(q: var Queue[A], a: A) =
-    let chq = ChannelQueue[A](q)
-    chq.ch.send(a)
-  result.get = proc(q: var Queue[A]): Option[A] =
-    let chq = ChannelQueue[A](q)
-    let d = chq.ch.tryRecv()
-    if d[0]:
-      d[1].some
-    else:
-      A.none
-  result.close = proc(q: var Queue[A]) =
-    cast[ChannelQueue[A]](q).ch.close
+  proc channelQueue*[A](): Queue[A] {.procvar.} =
+    result = new(ChannelQueue[A])
+    result.init = proc(q: var Queue[A]) =
+      let chq = ChannelQueue[A](q)
+      chq.ch.open
+    result.put = proc(q: var Queue[A], a: A) =
+      let chq = ChannelQueue[A](q)
+      chq.ch.send(a)
+    result.get = proc(q: var Queue[A]): Option[A] =
+      let chq = ChannelQueue[A](q)
+      let d = chq.ch.tryRecv()
+      if d[0]:
+        d[1].some
+      else:
+        A.none
+    result.close = proc(q: var Queue[A]) =
+      cast[ChannelQueue[A]](q).ch.close
 
 type DequeQueue[A] = ref object of Queue[A]
   q: Deque[A]
