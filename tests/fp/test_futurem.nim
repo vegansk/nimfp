@@ -36,10 +36,10 @@ suite "Future":
     check: res1.get == 6
 
     let y2 = act do:
-      x <- newFuture do() -> auto:
+      x <- (newFuture do() -> auto:
         block:
           raise newException(Exception, "Oops")
-        3
+        3)
       yield x * 2
     expect(Exception):
       discard y2.run.get

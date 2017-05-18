@@ -1,7 +1,8 @@
 import future,
        fp,
        strutils,
-       unittest
+       unittest,
+       boost.types
 
 suite "Concurrent":
 
@@ -17,12 +18,13 @@ suite "Concurrent":
     actor ! "Hello, world 2!"
 
   test "Actor with state":
-    let actor = newActorS[string, string](spawnStrategy, channelQueue, channelQueue, "") do(state, v: string) -> string:
+    proc actorF(state, v: string): string =
       result = state
       if v == "end":
-        echo state
+        discard #echo state
       else:
         result &= v & "\n"
+    let actor = newActorS[string, string](Strategy[Unit](spawnStrategy[Unit]), QueueImpl[string](channelQueue[string]), channelQueue, "", actorF)
     actor ! "Hello, world!"
     actor ! "Hello, world 2!"
     actor ! "end"

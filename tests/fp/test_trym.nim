@@ -10,16 +10,19 @@ suite "Try type":
     check: "Oops".failure(int).isFailure == true
 
   test "Conversion":
-    let x1 = fromEither tryST do:
+    let x1 = fromEither(tryST do:
       "test"
+    )
     check: x1.isSuccess and x1.get == "test"
-    let x2 = fromEither tryST do:
+    let x2 = fromEither(tryST do:
       "test".left(string)
+    )
     check: x2.isFailure and x2.getErrorMessage == "test"
     proc testProc: int =
       raise newException(Exception, "test")
-    let x3 = fromEither tryET do:
+    let x3 = fromEither(tryET do:
       testProc()
+    )
     check: x3.isFailure and x3.getErrorMessage == "test"
 
   test "Recover":
@@ -34,11 +37,13 @@ suite "Try type":
     let x2 = tryM do:
       discard
     check: x2.isSuccess and x2.get == ()
-    let x3 = join tryM do:
+    let x3 = join(tryM do:
       1.success
+    )
     check: x3.isSuccess and x3.get == 1
-    let x4 = join tryM do:
+    let x4 = join(tryM do:
       "Oops".failure(int)
+    )
     check: x4.isFailure and x4.getErrorMessage == "Oops"
 
   test "Utilities":

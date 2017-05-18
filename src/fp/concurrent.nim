@@ -12,17 +12,17 @@ when hasThreads:
 
 type Strategy*[A] = proc(a: () -> A): () -> A
 
-proc sequentalStrategy*[A](a: () -> A): () -> A {.procvar.} =
+proc sequentalStrategy*[A](a: () -> A): () -> A =
   let r = a()
   result = () => r
 
 when hasThreads:
-  proc spawnStrategy*[A](a: proc(): A {.gcsafe.}): () -> A {.procvar.} =
+  proc spawnStrategy*[A](a: proc(): A {.gcsafe.}): () -> A =
     let r = spawn a()
     result = proc(): auto =
       return ^r
 
-proc asyncStrategy*[A](a: () -> A): () -> A {.procvar.} =
+proc asyncStrategy*[A](a: () -> A): () -> A =
   let f = newFuture[A](a)
   result = proc(): auto =
     f.run.get

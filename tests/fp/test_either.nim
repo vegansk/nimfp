@@ -212,14 +212,16 @@ suite "Either ADT":
     check: eres == 1.rightE
 
   test "Exception macros":
-    check: 1.rightS == tryST do:
+    check: 1.rightS == (tryST do:
       check: 1 == 1
       1
+    )
     check: tryST(1.rightS) == 1.rightS
     check: tryET(1) == 1.rightE
-    check: 1.rightE == tryET do:
+    check: 1.rightE == (tryET do:
       check 2 == 2
       1.rightE
+    )
 
   test "Traversable":
     check: asList(1.rightS) == asList(1)
