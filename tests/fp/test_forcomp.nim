@@ -1,4 +1,12 @@
-import future, unittest, ../../src/fp/option, ../../src/fp/either, ../../src/fp/list, ../../src/fp/forcomp, macros, ../../src/fp/stream
+import future,
+       unittest,
+       macros,
+       ../../src/fp/option,
+       ../../src/fp/either,
+       ../../src/fp/list,
+       ../../src/fp/forcomp,
+       ../../src/fp/trym,
+       ../../src/fp/stream
 
 suite "ForComp":
   test "Option - manual":
@@ -152,19 +160,12 @@ suite "ForComp":
       yield x + y + z
     check: res == 6.some
 
-#Syntax 1:
-# dumpTree:
-#   fc[(x + y + z).some | (
-#     (x: int) <- 1.some,
-#     (y: int) <- 2.some,
-#     (_: int) <- doSomething(),
-#     (z: int) <- (y * 3).some
-#   )]
-# Syntax 2:
-# dumpTree:
-#   let x = act do:
-#     (x: int) <- 1.some
-#     (y: int) <- 2.some
-#     (_: int) <- doSomething()
-#     (z: int) <- (y * 3).some
-#     yield x + y + z
+  test "Misc syntax support":
+    proc test(x: int): int = x
+    let res = act do:
+      a <- tryM(test(1))
+      b <- tryM: test(3)
+      c <- tryM do: test(5)
+      d <- tryM test(7)
+      yield a + b + c + d
+    check: res == success(16)

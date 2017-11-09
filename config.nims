@@ -51,6 +51,9 @@ task test_either, "Run Either tests":
 task test_option, "Run Option tests":
   test "option"
 
+task test_forcomp, "Run for comprehension tests":
+  test "forcomp"
+
 task test_concurrent, "Run concurrent tests":
   test "concurrent"
 

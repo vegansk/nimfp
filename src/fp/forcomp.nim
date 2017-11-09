@@ -5,6 +5,21 @@ type ForComprehensionYield = distinct object
 
 var fc*: ForComprehension
 
+proc parseExpression(node: NimNode): NimNode {.compileTime.} =
+  if node.len == 3:
+    return node[2]
+  elif node.len == 4 and
+       node[2].kind == nnkIdent and
+       node[3].kind == nnkStmtList and
+       node[3][0].kind == nnkCall:
+    return newNimNode(
+      nnkCall
+    ).add(node[2]).add(node[3][0])
+  else:
+    echo node.toStrLit
+    echo treeRepr(node)
+    error("Can't create expression from node", node)
+
 proc forCompImpl(yieldResult: bool, comp: NimNode): NimNode {.compileTime.} =
   expectLen(comp, 3)
   expectKind(comp, nnkInfix)
@@ -18,19 +33,19 @@ proc forCompImpl(yieldResult: bool, comp: NimNode): NimNode {.compileTime.} =
     var x = comp[2][i]
     if x.kind != nnkInfix or $x[0] != "<-":
       x = newNimNode(nnkInfix).add(ident"<-").add(ident"_").add(x)
-    expectLen(x, 3)
+    expectMinLen(x, 3)
+    let expr = parseExpression(x)
     var iDef: NimNode
     var iType: NimNode
     if x[1].kind == nnkIdent:
       iDef = x[1]
-      iType = newCall(ident"elemType", x[2])
+      iType = newCall(ident"elemType", expr)
     else:
       expectLen(x[1], 1)
       expectMinLen(x[1][0], 2)
       expectKind(x[1][0][0], nnkIdent)
       iDef = x[1][0][0]
       iType = x[1][0][1]
-    let cont = x[2]
     let lmb = newProc(params = @[ident"auto", newIdentDefs(iDef, iType)], body = result, procType = nnkLambda)
     let p = newNimNode(nnkPragma)
     p.add(ident"closure")
@@ -38,10 +53,10 @@ proc forCompImpl(yieldResult: bool, comp: NimNode): NimNode {.compileTime.} =
     if yieldNow:
       yieldNow = false
       result = quote do:
-        `cont`.map(`lmb`)
+        `expr`.map(`lmb`)
     else:
       result = quote do:
-        `cont`.flatmap(`lmb`)
+        `expr`.flatmap(`lmb`)
 
 macro `[]`*(fc: ForComprehension, comp: untyped): untyped =
   ## For comprehension with list comprehension like syntax.
