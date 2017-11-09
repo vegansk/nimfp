@@ -10,11 +10,12 @@ proc parseExpression(node: NimNode): NimNode {.compileTime.} =
     return node[2]
   elif node.len == 4 and
        node[2].kind == nnkIdent and
-       node[3].kind == nnkStmtList and
-       node[3][0].kind == nnkCall:
+       node[3].kind == nnkStmtList:
+    let inner = newNimNode(nnkStmtListExpr)
+    node[3].copyChildrenTo(inner)
     return newNimNode(
       nnkCall
-    ).add(node[2]).add(node[3][0])
+    ).add(node[2]).add(inner)
   else:
     echo node.toStrLit
     echo treeRepr(node)

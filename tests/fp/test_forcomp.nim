@@ -165,7 +165,12 @@ suite "ForComp":
     let res = act do:
       a <- tryM(test(1))
       b <- tryM: test(3)
-      c <- tryM do: test(5)
+      c <- tryM do:
+        let x = test(5)
+        x
       d <- tryM test(7)
+      _ <- tryM do:
+        # void can also be used
+        discard test(0)
       yield a + b + c + d
     check: res == success(16)
