@@ -7,7 +7,6 @@ suite "Future":
   test "Initialization":
     let x1 = future do:
       1
-    check: x1.value.isEmpty
     discard run x1
     check: x1.value.isDefined
     check: x1.value.get.isSuccess
@@ -16,13 +15,13 @@ suite "Future":
       block:
         raise newException(Exception, "Oops")
       1
-    check: x2.value.isEmpty
     discard run x2
     check: x2.value.isDefined
     check: x2.value.get.isFailure
     check: x2.value.get.getErrorMessage == "Oops"
 
     let x3 = newFuture[void]()
+    check: x3.value.isEmpty
     x3.complete
     check: x3.value.isDefined
     check: x3.value.get.isSuccess

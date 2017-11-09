@@ -51,5 +51,8 @@ task test_either, "Run Either tests":
 task test_concurrent, "Run concurrent tests":
   test "concurrent"
 
+task test_futurem, "Run futurem tests":
+  test "futurem"
+
 task ex_httpactor, "Run httpactor example":
   example "httpactor", "httpactor" / "main"
