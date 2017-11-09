@@ -188,3 +188,11 @@ proc point*[A](v: A, t: typedesc[Option[A]]): Option[A] =
   v.some
 
 instance KleisliInst, Option[_], exporting(_)
+
+proc fold*[A,B](v: Option[A], ifNone: () -> B, ifSome: A -> B): B =
+  ## Returns the result of applying `ifSome` to the  value if `v` is
+  ## defined. Otherwise evaluates `ifNone`.
+  if v.isDefined:
+    ifSome(v.value)
+  else:
+    ifNone()

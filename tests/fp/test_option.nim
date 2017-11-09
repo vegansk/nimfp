@@ -113,6 +113,9 @@ suite "Option ADT":
     check: 1.some.asSeq == @[1]
     check: int.none.asSeq == newSeq[int]()
 
+    check: int.none.fold(() => "", v => $v) == ""
+    check: 1.some.fold(() => "", v => $v) == "1"
+
   test "Kleisli":
     let f = (v: int) => (v + 1).some
     let g = (v: int) => (v * 100).some

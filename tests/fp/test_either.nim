@@ -66,6 +66,9 @@ suite "Either ADT":
     check: 1.point(EitherS[int]) == 1.rightS
     check: 1.point(EitherE[int]) == 1.rightE
 
+    check: "0".left(int).fold(e => e, v => $v) == "0"
+    check: 1.rightS.fold(e => e, v => $v) == "1"
+
   test "Map":
     check: r.map(x => x * 2) == 20.rightS
     check: l.map(x => x * 2) != 20.rightS

@@ -348,3 +348,10 @@ proc point*[E,A](v: A, e: typedesc[Either[E,A]]): Either[E,A] =
   v.right(E)
 
 instance KleisliInst, E => Either[E,_], exporting(_)
+
+proc fold*[E,A,B](v: Either[E, A], ifLeft: E -> B, ifRight: A -> B): B =
+  ## Applies `ifLeft` if `v` is left, or `ifRight` if `v` is right
+  if v.isLeft:
+    ifLeft(v.lValue)
+  else:
+    ifRight(v.rValue)
