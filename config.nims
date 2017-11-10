@@ -48,6 +48,9 @@ task test, "Run all tests":
 task test_either, "Run Either tests":
   test "either"
 
+task test_list, "Run List tests":
+  test "list"
+
 task test_option, "Run Option tests":
   test "option"
 

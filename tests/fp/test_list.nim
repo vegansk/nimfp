@@ -43,16 +43,16 @@ suite "List ADT":
     proc unconsString(s: string): Option[(char, string)] =
       if s == "": none((char, string))
       else: some((s[0], s[1..^1]))
-    
+
     check: unfoldLeft(unconsString,"Success !") == ['!', ' ', 's', 's', 'e', 'c', 'c', 'u', 'S'].asList
     check: unfoldRight(unconsString,"Success !") == ['S', 'u', 'c', 'c', 'e', 's', 's', ' ', '!'].asList
-    
+
     var global_count: int = 0
     proc divmod10_count(n: int): Option[(int, int)] =
       inc global_count
       if n == 0: none((int,int))
       else: some(( (n mod 10).int, n div 10))
-      
+
     let _ = unfoldLeft(divmod10_count,12301230)
     check: global_count == 9
     let _ = unfoldRight(divmod10_count,12301230)

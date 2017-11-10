@@ -11,11 +11,9 @@ proc parseExpression(node: NimNode): NimNode {.compileTime.} =
   elif node.len == 4 and
        node[2].kind == nnkIdent and
        node[3].kind == nnkStmtList:
-    let inner = newNimNode(nnkStmtListExpr)
-    node[3].copyChildrenTo(inner)
     return newNimNode(
       nnkCall
-    ).add(node[2]).add(inner)
+    ).add(node[2]).add(node[3])
   else:
     echo node.toStrLit
     echo treeRepr(node)
@@ -54,10 +52,10 @@ proc forCompImpl(yieldResult: bool, comp: NimNode): NimNode {.compileTime.} =
     if yieldNow:
       yieldNow = false
       result = quote do:
-        `expr`.map(`lmb`)
+        (`expr`).map(`lmb`)
     else:
       result = quote do:
-        `expr`.flatmap(`lmb`)
+        (`expr`).flatmap(`lmb`)
 
 macro `[]`*(fc: ForComprehension, comp: untyped): untyped =
   ## For comprehension with list comprehension like syntax.

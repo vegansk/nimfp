@@ -169,8 +169,18 @@ suite "ForComp":
         let x = test(5)
         x
       d <- tryM test(7)
-      _ <- tryM do:
+      tryM do:
         # void can also be used
         discard test(0)
       yield a + b + c + d
     check: res == success(16)
+
+  test "Issues with the compiler":
+    proc pos(x: int): Option[int] = act do:
+      y <- (if x < 0: int.none else: x.some)
+      z <- act do:
+        x <- (if y == 0: int.none else: y.some)
+        yield x
+      yield z
+
+    check: pos(1) == 1.some

@@ -1,7 +1,8 @@
 import future,
        ./option,
        classy,
-       ./kleisli
+       ./kleisli,
+       typetraits
 
 {.experimental.}
 
@@ -69,6 +70,27 @@ type
   ListFormat = enum
     lfADT, lfSTD
 
+proc foldLeft*[T,U](xs: List[T], z: U, f: (U, T) -> U): U =
+  ## Fold left operation
+  case xs.isEmpty
+  of true: z
+  else: foldLeft(xs.tail, f(z, xs.head), f)
+
+# foldRight can be recursive, or realized via foldLeft.
+proc foldRight*[T,U](xs: List[T], z: U, f: (T, U) -> U): U =
+  ## Fold right operation. Can be defined via foldLeft (-d:foldRightViaLeft switch), or be recursive by default.
+  when defined(foldRightViaLeft):
+    foldLeft[T, U -> U](xs, (b: U) => b, (g: U -> U, x: T) => ((b: U) => g(f(x, b))))(z)
+  else:
+    case xs.isEmpty
+    of true: z
+    else: f(xs.head, xs.tail.foldRight(z, f))
+
+proc foldRightF*[T, U](xs: List[T], z: () -> U, f: (T, () -> U) -> U): U =
+  ## Right fold over lists. Lazy in accumulator - allows for early termination.
+  if xs.isEmpty: z()
+  else: f(xs.head, () => xs.tail.foldRightF(z, f))
+
 proc asString[T](xs: List[T], f: ListFormat): string =
   proc asAdt(xs: List[T]): string =
     case xs.isEmpty
@@ -92,27 +114,6 @@ proc `^^`*[T](v: T, xs: List[T]): List[T] =
 proc `++`*[T](xs, ys: List[T]): List[T] =
   ## Concatenates two lists
   xs.append(ys)
-
-proc foldLeft*[T,U](xs: List[T], z: U, f: (U, T) -> U): U =
-  ## Fold left operation
-  case xs.isEmpty
-  of true: z
-  else: foldLeft(xs.tail, f(z, xs.head), f)
-
-# foldRight can be recursive, or realized via foldLeft.
-proc foldRight*[T,U](xs: List[T], z: U, f: (T, U) -> U): U =
-  ## Fold right operation. Can be defined via foldLeft (-d:foldRightViaLeft switch), or be recursive by default.
-  when defined(foldRightViaLeft):
-    foldLeft[T, U -> U](xs, (b: U) => b, (g: U -> U, x: T) => ((b: U) => g(f(x, b))))(z)
-  else:
-    case xs.isEmpty
-    of true: z
-    else: f(xs.head, xs.tail.foldRight(z, f))
-
-proc foldRightF*[T, U](xs: List[T], z: () -> U, f: (T, () -> U) -> U): U =
-  ## Right fold over lists. Lazy in accumulator - allows for early termination.
-  if xs.isEmpty: z()
-  else: f(xs.head, () => xs.tail.foldRightF(z, f))
 
 # After bug https://github.com/nim-lang/Nim/issues/5647, remove item and seed from type signature
 proc unfoldLeft*[T, U](f: U -> Option[tuple[item: T, seed: U]], x:U): List[T] {. inline .}=
@@ -269,6 +270,16 @@ proc hasSubsequence*[T](xs: List[T], ys: List[T]): bool =
   else:
     xs.tail.hasSubsequence(ys)
 
+# proc traverseImpl*[A, B, G, GB, GLB](xs: List[A], f: A -> GB): auto =
+#   foldRightF(
+#     xs,
+#     () => point(Nil[B](), type(G)),
+#     (x: A, xs: () -> GLB) => f(x).map2F(xs, (y: B, ys: List[B]) => y ^^ ys)
+#   )
+
+# proc traverse*[T,U](xs: List[T], f: T -> Option[U]): Option[List[U]] =
+#   traverseImpl[T,U,Option, Option[U], Option[List[U]]](xs, f)
+
 proc traverse*[T,U](xs: List[T], f: T -> Option[U]): Option[List[U]] =
   ## Transforms the list of `T` into the list of `U` f via `f` only if
   ## all results of applying `f` are defined.
@@ -288,7 +299,6 @@ proc traverse*[T,U](xs: List[T], f: T -> Option[U]): Option[List[U]] =
     acc = Cons(headRes.get, acc)
     rest = rest.tail
   acc.reverse.some
-
 
 proc sequence*[T](xs: List[Option[T]]): Option[List[T]] =
   ## Transforms the list of options into the option of list, which

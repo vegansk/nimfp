@@ -263,7 +263,7 @@ proc asEither*[E,A](o: Option[A], e: E): Either[E,A] =
   condF(o.isDefined, () => o.get, () => e)
 
 proc asEitherF*[E,A](o: Option[A], e: () -> E): Either[E,A] =
-  ## Converts Option to Either type 
+  ## Converts Option to Either type
   condF(o.isDefined, () => o.get, e())
 
 proc asOption*[E,A](e: Either[E,A]): Option[A] =

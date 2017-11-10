@@ -196,3 +196,15 @@ proc fold*[A,B](v: Option[A], ifNone: () -> B, ifSome: A -> B): B =
     ifSome(v.value)
   else:
     ifNone()
+
+proc foldLeft*[A,B](v: Option[A], b: B, f: (B, A) -> B): B =
+  if v.isDefined:
+    f(b, v.value)
+  else:
+    b
+
+proc foldRight*[A,B](v: Option[A], b: B, f: (A, B) -> B): B =
+  if v.isDefined:
+    f(v.value, b)
+  else:
+    b
