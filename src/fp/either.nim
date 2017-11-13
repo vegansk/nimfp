@@ -238,7 +238,7 @@ proc traverse*[E, A, B](
   f: A -> Either[E, B]
 ): Either[E, Option[B]] =
   if opt.isEmpty:
-    B.none.rightS
+    B.none.right(E)
   else:
     f(opt.get).map((b: B) => b.some)
 

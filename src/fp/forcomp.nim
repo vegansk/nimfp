@@ -10,7 +10,7 @@ proc parseExpression(node: NimNode): NimNode {.compileTime.} =
     return node[2]
   elif node.len == 4 and
        node[2].kind == nnkIdent and
-       node[3].kind == nnkStmtList:
+       node[3].kind in {nnkStmtList, nnkDo}:
     return newNimNode(
       nnkCall
     ).add(node[2]).add(node[3])

@@ -175,7 +175,7 @@ suite "ForComp":
       yield a + b + c + d
     check: res == success(16)
 
-  test "Issues with the compiler":
+  test "AST change #1":
     proc pos(x: int): Option[int] = act do:
       y <- (if x < 0: int.none else: x.some)
       z <- act do:
@@ -184,3 +184,10 @@ suite "ForComp":
       yield z
 
     check: pos(1) == 1.some
+
+  test "AST change #2":
+    let x = act do:
+      v <- tryS do () -> auto:
+        1
+      yield v
+    check: x == 1.rightS
