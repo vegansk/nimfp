@@ -338,10 +338,13 @@ proc point*[T](v: T, t: typedesc[List[T]]): List[T] =
 
 instance KleisliInst, List[_], exporting(_)
 
-proc sort*[T](xs: List[T]): List[T] =
+proc sortBy*[T](xs: List, f: (T, T) -> int): List[T] =
   if xs.isEmpty:
     xs
   else:
     let h = xs.head
     let t = xs.tail
-    t.filter(v => v < h).sort ++ asList(h) ++ t.filter(v => v >= h).sort
+    t.filter(v => (f(v, h) < 0)).sort ++ asList(h) ++ t.filter(v => (f(v, h) >= 0)).sort
+
+proc sort*[T](xs: List[T]): List[T] =
+  xs.sortBy((x: T, y: T) => cmp(x, y))
