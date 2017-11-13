@@ -344,7 +344,7 @@ proc sortBy*[T](xs: List, f: (T, T) -> int): List[T] =
   else:
     let h = xs.head
     let t = xs.tail
-    t.filter(v => (f(v, h) < 0)).sort ++ asList(h) ++ t.filter(v => (f(v, h) >= 0)).sort
+    t.filter(v => (f(v, h) < 0)).sortBy(f) ++ asList(h) ++ t.filter(v => (f(v, h) >= 0)).sortBy(f)
 
 proc sort*[T](xs: List[T]): List[T] =
   xs.sortBy((x: T, y: T) => cmp(x, y))
