@@ -337,3 +337,11 @@ proc point*[T](v: T, t: typedesc[List[T]]): List[T] =
   v ^^ Nil[T]()
 
 instance KleisliInst, List[_], exporting(_)
+
+proc sort*[T](xs: List[T]): List[T] =
+  if xs.isEmpty:
+    xs
+  else:
+    let h = xs.head
+    let t = xs.tail
+    t.filter(v => v < h).sort ++ asList(h) ++ t.filter(v => v >= h).sort

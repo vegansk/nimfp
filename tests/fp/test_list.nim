@@ -106,6 +106,8 @@ suite "List ADT":
     check: asList(1, 2, 3).partition((i: int) => i > 4) == (Nil[int](), asList(1, 2, 3))
     check: asList(1, 2, 3).partition((i: int) => i > 0) == (asList(1, 2, 3), Nil[int]())
 
+    check: asList(3, 5, 2, 4, 1).sort == asList(1, 2, 3, 4, 5)
+
   test "Iterators":
     let lst1 = [1, 2, 3, 4, 5].asList
     var lst2 = Nil[int]()
