@@ -53,6 +53,8 @@ suite "Option ADT":
     check: 2.some.flatMap(f) == some(4)
     check: 2.none.flatMap(f) == none(4)
 
+    check: 2.some.flatMapIt(it * 2) == some(4)
+
   test "Join":
     check: 2.some.some.join == 2.some
     check: int.none.some.join == int.none

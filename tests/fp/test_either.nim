@@ -80,6 +80,9 @@ suite "Either ADT":
     check: r.flatMap((x: int) => (x * 2).rightS) == 20.rightS
     check: r.flatMap((x: int) => l) == l
 
+    check: r.flatMapIt((it * 2).rightS) == 20.rightS
+    check: r.flatMapIt(l) == l
+
     check: "Value".rightS.map2(10.rightS, (x: string, y: int) => x & $y) == "Value10".rightS
     check: "Error1".left(string).map2(10.rightS, (x: string, y: int) => x & $y) == "Error1".left(string)
     check: "Value".rightS.map2("Error2".left(int), (x: string, y: int) => x & $y) == "Error2".left(string)
