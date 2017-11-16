@@ -136,9 +136,13 @@ suite "Either ADT":
     let badE = @[1, 2, 3, 4].asList.map(x => x.rightS) ++ @["Error".left(int)].asList
 
     check: good.traverse((x: int) => x.rightS) == good.rightS
+    check: good.traverseU((x: int) => x.rightS) == ().rightS
     check: good.traverse((x: int) => (if x < 3: x.rightS else: "Error".left(type(x)))) == "Error".left(List[int])
+    check: good.traverseU((x: int) => (if x < 3: x.rightS else: "Error".left(type(x)))) == "Error".left(Unit)
     check: goodE.sequence == good.rightS
+    check: goodE.sequenceU == ().rightS
     check: badE.sequence == "Error".left(List[int])
+    check: badE.sequenceU == "Error".left(Unit)
 
     # traverse should not call f after the first Left
     var cnt = 0
@@ -153,14 +157,20 @@ suite "Either ADT":
     proc leftFunc(i: int): EitherS[bool] = "foo".left(bool)
     proc rightFunc(i: int): EitherS[bool] = true.rightS
     check: int.none.traverse(rightFunc) == bool.none.rightS
+    check: int.none.traverseU(rightFunc) == ().rightS
     check: int.none.traverse(leftFunc) == bool.none.rightS
+    check: int.none.traverseU(leftFunc) == ().rightS
     check: 1.some.traverse(rightFunc) == true.some.rightS
-    check: 1.some.traverse(leftFunc) == "foo".left(Option[bool])
+    check: 1.some.traverseU(rightFunc) == ().rightS
+    check: 1.some.traverseU(leftFunc) == "foo".left(Unit)
 
     # sequence with Option
     check: 1.rightS.some.sequence == 1.some.rightS
+    check: 1.rightS.some.sequenceU == ().rightS
     check: "foo".left(int).some.sequence == "foo".left(Option[int])
+    check: "foo".left(int).some.sequenceU == "foo".left(Unit)
     check: EitherS[int].none.sequence == int.none.rightS
+    check: EitherS[int].none.sequenceU == ().rightS
 
   test "Traverse with List should allow to properly infer gcsafe":
     proc f(i: int): auto = i.rightS

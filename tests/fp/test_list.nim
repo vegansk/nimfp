@@ -1,4 +1,4 @@
-import ../../src/fp/list, ../../src/fp/option, unittest, future
+import ../../src/fp/list, ../../src/fp/option, unittest, future, boost.types
 
 suite "List ADT":
 
@@ -60,7 +60,9 @@ suite "List ADT":
 
   test "Transformations":
     check: @[1, 2, 3].asList.traverse((x: int) => x.some) == @[1, 2, 3].asList.some
+    check: @[1, 2, 3].asList.traverseU((x: int) => x.some) == ().some
     check: @[1, 2, 3].asList.traverse((x: int) => (if x > 2: x.none else: x.some)) == List[int].none
+    check: @[1, 2, 3].asList.traverseU((x: int) => (if x > 2: x.none else: x.some)) == Unit.none
 
     # traverse should not call f after the first None
     var cnt = 0
@@ -72,7 +74,9 @@ suite "List ADT":
     check: cnt == 2
 
     check: @[1.some, 2.some, 3.some].asList.sequence == @[1, 2, 3].asList.some
+    check: @[1.some, 2.some, 3.some].asList.sequenceU == ().some
     check: @[1.some, 2.none, 3.some].asList.sequence == List[int].none
+    check: @[1.some, 2.none, 3.some].asList.sequenceU == Unit.none
 
   test "Drop operations":
     let lst = lc[x|(x <- 1..100),int].asList

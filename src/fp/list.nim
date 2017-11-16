@@ -2,7 +2,8 @@ import future,
        ./option,
        classy,
        ./kleisli,
-       typetraits
+       typetraits,
+       boost.types
 
 {.experimental.}
 
@@ -304,6 +305,18 @@ proc sequence*[T](xs: List[Option[T]]): Option[List[T]] =
   ## Transforms the list of options into the option of list, which
   ## is defined only if all of the source list options are defined
   xs.traverse((x: Option[T]) => x)
+
+proc traverseU*[T,U](xs: List[T], f: T -> Option[U]): Option[Unit] =
+  var rest = xs
+  while not rest.isEmpty:
+    let headRes = f(rest.head)
+    if headRes.isEmpty:
+      return Unit.none
+    rest = rest.tail
+  ().some
+
+proc sequenceU*[T](xs: List[Option[T]]): Option[Unit] =
+  xs.traverseU((x: Option[T]) => x)
 
 proc asList*[T](xs: varargs[T]): List[T] =
   ## Creates list from varargs

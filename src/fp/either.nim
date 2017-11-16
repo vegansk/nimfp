@@ -210,8 +210,15 @@ when compiles(getCurrentException()):
       else:
         raise newException(Exception, $e.getLeft)
 
-proc traverse*[T, E, U](xs: List[T], f: T -> Either[E, U]): Either[E, List[U]] =
-  ## Transforms the list of `T` into the list of `U` f via `f` only if
+proc fold*[E,A,B](v: Either[E, A], ifLeft: E -> B, ifRight: A -> B): B =
+  ## Applies `ifLeft` if `v` is left, or `ifRight` if `v` is right
+  if v.isLeft:
+    ifLeft(v.lValue)
+  else:
+    ifRight(v.rValue)
+
+proc traverse*[E, A, B](xs: List[A], f: A -> Either[E, B]): Either[E, List[B]] =
+  ## Transforms the list of `A` into the list of `B` f via `f` only if
   ## all results of applying `f` are `Right`.
   ## Doesnt execute `f` for elements after the first `Left` is encountered.
 
@@ -221,17 +228,29 @@ proc traverse*[T, E, U](xs: List[T], f: T -> Either[E, U]): Either[E, List[U]] =
   # of recursion.
 
   var rest = xs
-  var acc = Nil[U]()
+  var acc = Nil[B]()
   while not rest.isEmpty:
     let headRes = f(rest.head)
     if headRes.isLeft:
-      return headRes.getLeft.left(List[U])
+      return headRes.getLeft.left(List[B])
     acc = Cons(headRes.get, acc)
     rest = rest.tail
   acc.reverse.right(E)
 
 proc sequence*[E,A](xs: List[Either[E,A]]): Either[E,List[A]] =
   xs.traverse((x: Either[E,A]) => x)
+
+proc traverseU*[E,A,B](xs: List[A], f: A -> Either[E,B]): Either[E,Unit] =
+  var rest = xs
+  while not rest.isEmpty:
+    let headRes = f(rest.head)
+    if headRes.isLeft:
+      return headRes.getLeft.left(Unit)
+    rest = rest.tail
+  ().right(E)
+
+proc sequenceU*[E,A](xs: List[Either[E,A]]): Either[E,Unit] =
+  xs.traverseU((x: Either[E,A]) => x)
 
 proc traverse*[E, A, B](
   opt: Option[A],
@@ -244,6 +263,21 @@ proc traverse*[E, A, B](
 
 proc sequence*[E, A](oea: Option[Either[E, A]]): Either[E, Option[A]] =
   oea.traverse((ea: Either[E, A]) => ea)
+
+proc traverseU*[E, A, B](
+  opt: Option[A],
+  f: A -> Either[E, B]
+): Either[E, Unit] =
+  if opt.isEmpty:
+    ().right(E)
+  else:
+    f(opt.get).fold(
+      (e: E) => e.left(Unit),
+      (v: B) => ().right(E)
+    )
+
+proc sequenceU*[E, A](oea: Option[Either[E, A]]): Either[E, Unit] =
+  oea.traverseU((ea: Either[E, A]) => ea)
 
 proc forEach*[E,A](a: Either[E,A], f: A -> void): void =
   ## Applies `f` to the Either's value if it's right
@@ -349,9 +383,3 @@ proc point*[E,A](v: A, e: typedesc[Either[E,A]]): Either[E,A] =
 
 instance KleisliInst, E => Either[E,_], exporting(_)
 
-proc fold*[E,A,B](v: Either[E, A], ifLeft: E -> B, ifRight: A -> B): B =
-  ## Applies `ifLeft` if `v` is left, or `ifRight` if `v` is right
-  if v.isLeft:
-    ifLeft(v.lValue)
-  else:
-    ifRight(v.rValue)
