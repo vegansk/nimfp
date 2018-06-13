@@ -46,7 +46,8 @@ suite "Future":
   test "Future[void] support":
     check unit[void]().map(_ => 1).run.get == 1
     check unit[void]().flatMap((_: Unit) => unit(1)).run.get == 1
-    check unit[void]().elemType is Unit
+    let correctType = unit[void]().elemType is Unit
+    check correctType
 
   test "Utilities":
     let x1 = future(future(1))

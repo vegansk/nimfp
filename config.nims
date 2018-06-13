@@ -22,8 +22,8 @@ proc buildBase(debug: bool, bin: string, src: string) =
     --linetrace: on
     --verbosity: 1
 
-    --NimblePath: src
-    --NimblePath: srcdir
+    --path: src
+    --path: srcdir
 
   setCommand "c", src
 
