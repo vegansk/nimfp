@@ -7,10 +7,9 @@ from fp.forcomp import act
 
 suite "Symbol binding in act":
   test "ForComp - act should not require additional imports":
-    let success = compiles(
-      act do:
+    let success = compiles:
+      act:
        x <- 1.some
        x.some
-    )
 
     check success

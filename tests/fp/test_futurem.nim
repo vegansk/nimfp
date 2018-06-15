@@ -28,13 +28,13 @@ suite "Future":
     check: x3.value.get.get == ()
 
   test "Do notation":
-    let y1 = act do:
+    let y1 = act:
       x <- future(3)
       yield x * 2
     let res1 = run y1
     check: res1.get == 6
 
-    let y2 = act do:
+    let y2 = act:
       x <- (newFuture do() -> auto:
         block:
           raise newException(Exception, "Oops")

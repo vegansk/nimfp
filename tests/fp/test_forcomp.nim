@@ -55,12 +55,12 @@ suite "ForComp":
 
   test "Option - act macro":
     # for (x <- 1.some, y <- x + 3) yield y * 100
-    let res = act do:
+    let res = act:
       (x: int) <- 1.some
       (y: int) <- (x + 3).some
       (y*100).some
     check: res == 400.some
-    let res2 = act do:
+    let res2 = act:
       (x: int) <- int.none
       (y: int) <- (x + 3).some
       (y*100).some
@@ -68,12 +68,12 @@ suite "ForComp":
 
   test "Either - act macro":
     # for (x <- 1.rightS, y <- x + 3) yield y * 100
-    let res = act do:
+    let res = act:
       (x: int) <- 1.rightS
       (y: int) <- (x + 3).rightS
       (y*100).rightS
     check: res == 400.rightS
-    let res2 = act do:
+    let res2 = act:
       (x: int) <- "Fail".left(int)
       (y: int) <- (x + 3).rightS
       (y*100).rightS
@@ -88,20 +88,20 @@ suite "ForComp":
     check: testFunc(20) == 2000.some
 
   test "Lists":
-    let res = act do:
+    let res = act:
       (x: int) <- asList(1,2,3)
       (y: int) <- asList(1,2,3)
       asList((x, y))
     echo res
 
   test "Type inference":
-    let res = act do:
+    let res = act:
       x <- asList(1,2,3)
       y <- asList("a", "b", "c")
       asList(y & $x)
     echo res
 
-    let resO = act do:
+    let resO = act:
       x <- 1.some
       y <- (x * 2).some
       ().none
@@ -122,7 +122,7 @@ suite "ForComp":
   test "Streams test":
     proc intStream(fr: int): Stream[int] =
       cons(() => fr, () => intStream(fr + 1))
-    let res = act do:
+    let res = act:
       x <- intStream(1)
       asStream("S" & $x)
     check: res.take(10).asList == lc[i | (i <- 1..10), int].asList.map(v => "S" & $v)
@@ -135,7 +135,7 @@ suite "ForComp":
     template elemType(s: seq): typedesc =
       type(s[0])
 
-    let res = act do:
+    let res = act:
       x <- @[1, 2, 3]
       y <- @[100, 200, 300]
       z <- @[5, 7]
@@ -146,14 +146,14 @@ suite "ForComp":
   test "act in generics":
     # https://github.com/nim-lang/Nim/issues/4669
     proc foo[A](a: A): Option[A] =
-      act do:
+      act:
         a0 <- a.some
         a0.some
 
     assert: foo("123") == "123".some
 
   test "Yield in do notation":
-    let res = act do:
+    let res = act:
       x <- 1.some
       y <- 2.some
       z <- 3.some
@@ -162,7 +162,7 @@ suite "ForComp":
 
   test "Misc syntax support":
     proc test(x: int): int = x
-    let res = act do:
+    let res = act:
       a <- tryM(test(1))
       b <- tryM: test(3)
       c <- tryM do:
@@ -176,9 +176,9 @@ suite "ForComp":
     check: res == success(16)
 
   test "AST change #1":
-    proc pos(x: int): Option[int] = act do:
+    proc pos(x: int): Option[int] = act:
       y <- (if x < 0: int.none else: x.some)
-      z <- act do:
+      z <- act:
         x <- (if y == 0: int.none else: y.some)
         yield x
       yield z
@@ -186,7 +186,7 @@ suite "ForComp":
     check: pos(1) == 1.some
 
   test "AST change #2":
-    let x = act do:
+    let x = act:
       v <- tryS do () -> auto:
         1
       yield v
