@@ -28,13 +28,13 @@ suite "Future":
     check: x3.value.get.get == ()
 
   test "Do notation":
-    let y1 = act do:
+    let y1 = act:
       x <- future(3)
       yield x * 2
     let res1 = run y1
     check: res1.get == 6
 
-    let y2 = act do:
+    let y2 = act:
       x <- (newFuture do() -> auto:
         block:
           raise newException(Exception, "Oops")
@@ -46,7 +46,8 @@ suite "Future":
   test "Future[void] support":
     check unit[void]().map(_ => 1).run.get == 1
     check unit[void]().flatMap((_: Unit) => unit(1)).run.get == 1
-    check unit[void]().elemType is Unit
+    let correctType = unit[void]().elemType is Unit
+    check correctType
 
   test "Utilities":
     let x1 = future(future(1))

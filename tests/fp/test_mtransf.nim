@@ -19,13 +19,13 @@ suite "Monad transformers":
         none(Option[string])
       else:
         ($id).some.some
-    let articles = act do:
+    let articles = act:
       a1 <- optionT(getArticle(1))
       a2 <- optionT(getArticle(2))
       a3 <- optionT(getArticle(3))
       optionT((a1, a2, a3).some.some)
     check: articles.run == ("1", "2", "3").some.some
-    let badArticles = act do:
+    let badArticles = act:
       a <- articles
       bad <- optionT(getArticle(0))
       (a[0], a[1], a[2], bad).some.some.optionT
@@ -43,13 +43,13 @@ suite "Monad transformers":
         "Not found".left(Option[string])
       else:
         ($id).some.rightS
-    let articles = act do:
+    let articles = act:
       a1 <- optionT(getArticle(1))
       a2 <- optionT(getArticle(2))
       a3 <- optionT(getArticle(3))
       optionT((a1, a2, a3).some.rightS)
     check: articles.run == ("1", "2", "3").some.rightS
-    let badArticles = act do:
+    let badArticles = act:
       a <- articles
       bad <- optionT(getArticle(0))
       (a[0], a[1], a[2], bad).some.rightS.optionT
@@ -67,13 +67,13 @@ suite "Monad transformers":
         Nil[Option[string]]()
       else:
         ($id).some.point(List)
-    let articles = act do:
+    let articles = act:
       a1 <- optionT(getArticle(1))
       a2 <- optionT(getArticle(2))
       a3 <- optionT(getArticle(3))
       optionT([(a1, a2, a3).some].asList)
     check: articles.run == [("1", "2", "3").some].asList
-    let badArticles = act do:
+    let badArticles = act:
       a <- articles
       bad <- optionT(getArticle(0))
       [[a[0], a[1], a[2], bad].asList.some].asList.optionT

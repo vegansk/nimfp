@@ -32,7 +32,7 @@ proc none*(T: typedesc): Option[T] = None[T]()
 
 proc notNil*[T](o: Option[T]): Option[T] =
   ## Maps nil object to none
-  if o.kind == okSome and o.value == nil:
+  if o.kind == okSome and o.value.isNil:
     none(T)
   else:
     o

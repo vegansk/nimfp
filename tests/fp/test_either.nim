@@ -217,7 +217,8 @@ suite "Either ADT":
       var t: Thread[pointer]
       createThread(t, thr, s)
       t.joinThread
-      ($s[]).rightS
+      ($s.cstring).rightS
+
     check: bres.run == sres
 
     let eres = "Exception".left(int).catch do (s: string) -> auto:

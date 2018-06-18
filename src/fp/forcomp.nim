@@ -79,7 +79,7 @@ macro act*(comp: untyped): untyped =
   ##
   ## .. code-block:: nim
   ##
-  ##   let res = act do:
+  ##   let res = act:
   ##     (x: int) <- 1.some,
   ##     (y: int) <- (x + 3).some
   ##     (y*100).some

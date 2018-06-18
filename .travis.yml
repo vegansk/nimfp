@@ -1,7 +1,7 @@
 language: c
 before_install:
   # Install nim
-  - git clone -b v0.17.2 git://github.com/nim-lang/Nim.git --depth 1
+  - git clone -b v0.18.0 git://github.com/nim-lang/Nim.git --depth 1
   - cd Nim
   - git clone --depth 1 git://github.com/nim-lang/csources
   - cd csources && sh build.sh
