@@ -1,4 +1,4 @@
-import future,
+import sugar,
        asyncdispatch,
        ./trym,
        ./option,

@@ -3,7 +3,7 @@ import boost.types,
        ./futurem,
        ./option,
        ./trym,
-       future,
+       sugar,
        deques
 
 const hasThreads = compileOption("threads")

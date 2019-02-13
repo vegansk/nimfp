@@ -2,7 +2,7 @@ import ../../src/fp/list,
        ../../src/fp/either,
        ../../src/fp/option,
        unittest,
-       future,
+       sugar,
        boost.types,
        threadpool
 

@@ -1,4 +1,4 @@
-import ../../src/fp/option, unittest, future
+import ../../src/fp/option, unittest, sugar
 
 suite "Option ADT":
 
@@ -67,7 +67,7 @@ suite "Option ADT":
 
     check: 2.some.orElse(3.some) == 2.some
     check: 2.none.orElse(3.some) == 3.some
-    
+
     check: 2.some.orElse(() => 4.some) == 2.some
     check: 2.none.orElse(() => 4.some) == 4.some
 

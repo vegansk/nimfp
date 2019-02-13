@@ -1,4 +1,4 @@
-import future,
+import sugar,
        boost.types,
        classy,
        ./list,

@@ -1,5 +1,5 @@
 import unittest,
-       future,
+       sugar,
        fp.function,
        fp.list,
        fp.forcomp

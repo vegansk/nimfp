@@ -1,7 +1,7 @@
 import unittest,
        fp.trym,
        fp.either,
-       future
+       sugar
 
 suite "Try type":
   test "Initialization":

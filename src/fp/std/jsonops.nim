@@ -1,5 +1,5 @@
 import json,
-       future,
+       sugar,
        typetraits,
        ../either,
        ../option,

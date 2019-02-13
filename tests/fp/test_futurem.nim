@@ -1,6 +1,6 @@
 import unittest,
        fp,
-       future,
+       sugar,
        boost.types
 
 suite "Future":

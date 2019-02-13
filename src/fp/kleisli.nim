@@ -1,5 +1,5 @@
 import classy,
-       future
+       sugar
 
 typeclass KleisliInst, F[_], exported:
   proc `>>=`[A,B](a: F[A], f: A -> F[B]): F[B] =

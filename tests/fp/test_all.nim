@@ -1,4 +1,4 @@
-import ../src/fp,
+import ../../src/fp,
        ./test_option,
        ./test_either,
        ./test_trym,

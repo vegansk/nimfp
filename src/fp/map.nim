@@ -1,5 +1,5 @@
 import ./list,
-       future,
+       sugar,
        ./option,
        boost.data.rbtree,
        sequtils
@@ -29,7 +29,7 @@ proc `$`*[K,V](m: Map[K,V]): string =
     result &= $k & " => " & $v
   result &= ")"
 
-# future.`->` doesn't support ``MapItem[K,V] -> bool`` declaration
+# sugar.`->` doesn't support ``MapItem[K,V] -> bool`` declaration
 proc find*[K,V](m: Map[K,V], p: proc(i: (K,V)): bool): Option[tuple[k: K, v: V]] =
   for k, v in m.pairs:
     if p((k,v)):

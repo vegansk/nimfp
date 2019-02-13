@@ -1,5 +1,5 @@
 import unittest,
-       future,
+       sugar,
        fp.option,
        fp.either,
        fp.list,

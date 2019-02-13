@@ -1,4 +1,4 @@
-import future,
+import sugar,
        fp,
        strutils,
        unittest,

@@ -1,4 +1,4 @@
-import ../../src/fp/stream, ../../src/fp/option, future, unittest
+import ../../src/fp/stream, ../../src/fp/option, sugar, unittest
 
 suite "Stream":
 
