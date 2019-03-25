@@ -1,10 +1,10 @@
 import unittest,
-       future,
-       fp.option,
-       fp.either,
-       fp.list,
-       fp.forcomp,
-       fp.mtransf
+       sugar,
+       fp/option,
+       fp/either,
+       fp/list,
+       fp/forcomp,
+       fp/mtransf
 
 suite "Monad transformers":
   test "OptionTOption":

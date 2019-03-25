@@ -1,4 +1,4 @@
-import future,
+import sugar,
        unittest,
        macros,
        ../../src/fp/option,

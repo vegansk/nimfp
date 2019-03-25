@@ -1,4 +1,4 @@
-import ../../src/fp/option, unittest, future
+import ../../src/fp/option, unittest, sugar
 
 suite "Option ADT":
 
@@ -15,13 +15,10 @@ suite "Option ADT":
     check: s == Some("test")
     check: s != string.none
     check: n == None[int]()
-    check: "".some.notNil == "".some
-    check: nil.string.some.notNil == "".none
-    check: "".none.notNil == "".none
+    check: nil.cstring.some.notNil == cstring.none
     check: " 123 ".some.notEmpty == " 123 ".some
     check: "  ".some.notEmpty == "".none
     check: "123".none.notEmpty == "".none
-    check: nil.string.some.notEmpty == "".none
 
     check: (2 < 3).optionF(() => true).getOrElse(false)
     check: (2 < 3).option(true).getOrElse(false)

@@ -1,4 +1,4 @@
-import future,
+import sugar,
        strutils,
        classy,
        ./kleisli,
@@ -39,8 +39,8 @@ proc notNil*[T](o: Option[T]): Option[T] =
 
 proc notEmpty*(o: Option[string]): Option[string] =
   ## Maps empty string to none
-  if o.kind == okSome and (o.value == nil or o.value.strip == ""):
-    "".none
+  if o.kind == okSome and (o.value.strip == ""):
+    string.none
   else:
     o
 

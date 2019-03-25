@@ -1,6 +1,6 @@
-import unittest, fp.option
+import unittest, fp/option
 
-from fp.forcomp import act
+from fp/forcomp import act
 
 ## make sure act macro doesn't require having fc in
 ## instantiation context (matters for templates and generics)

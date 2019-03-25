@@ -1,9 +1,9 @@
-import future,
+import sugar,
        ./option,
        classy,
        ./kleisli,
        typetraits,
-       boost.types
+       boost/types
 
 {.experimental.}
 

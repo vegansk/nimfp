@@ -1,5 +1,5 @@
 import ./either,
-       future,
+       sugar,
        macros
 
 export either

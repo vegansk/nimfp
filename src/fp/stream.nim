@@ -1,4 +1,4 @@
-import future,
+import sugar,
        ./option,
        ./list,
        ./function

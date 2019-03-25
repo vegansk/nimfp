@@ -1,4 +1,4 @@
-import future,
+import sugar,
        classy,
        ./option,
        ./either,

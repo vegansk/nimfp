@@ -1,8 +1,8 @@
-import future,
+import sugar,
        fp,
        strutils,
        unittest,
-       boost.types
+       boost/types
 
 suite "Concurrent":
 

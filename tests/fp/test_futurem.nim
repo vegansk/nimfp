@@ -1,7 +1,7 @@
 import unittest,
        fp,
-       future,
-       boost.types
+       sugar,
+       boost/types
 
 suite "Future":
   test "Initialization":
