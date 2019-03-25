@@ -1,9 +1,9 @@
-import boost.types,
-       boost.typeutils,
+import boost/types,
+       boost/typeutils,
        ./futurem,
        ./option,
        ./trym,
-       future,
+       sugar,
        deques
 
 const hasThreads = compileOption("threads")

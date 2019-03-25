@@ -7,4 +7,4 @@ license       = "MIT"
 srcDir = "src"
 
 # Deps
-requires "nim >= 0.18.0", "nimboost >= 0.5.4", "classy >= 0.0.2"
+requires "nim >= 0.19.0", "nimboost >= 0.5.5", "classy >= 0.0.3"

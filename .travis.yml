@@ -1,18 +1,26 @@
 language: c
-before_install:
-  # Install nim
-  - git clone -b v0.18.0 git://github.com/nim-lang/Nim.git --depth 1
-  - cd Nim
-  - git clone --depth 1 git://github.com/nim-lang/csources
-  - cd csources && sh build.sh
-  - cd ..
-  - bin/nim c koch
-  - sed -i -e 's,cc = gcc,cc = clang,' config/nim.cfg
-  - ./koch boot -d:release
-  - export PATH=$PWD/bin:$PATH
-  - ./koch nimble
-  - cd ..
+
+env:
+  # Nim versions to test against
+  - CHOOSENIM_CHOOSE_VERSION=devel
+  - CHOOSENIM_CHOOSE_VERSION=0.19.4
+  - CHOOSENIM_CHOOSE_VERSION=0.19.0
+
+matrix:
+  allow_failures:
+    # devel branch is often broken
+    - env: CHOOSENIM_CHOOSE_VERSION=devel
+
+install:
+  - curl https://nim-lang.org/choosenim/init.sh -sSf | sh -s -- -y
+  - export PATH=~/.nimble/bin:$PATH
+  - nimble update
+  - nimble install -d -y
+
+before_script:
+  - set -e
+  - export PATH=~/.nimble/bin:$PATH
+  - export CHOOSENIM_NO_ANALYTICS=1
 script:
-  - nimble install -y
   - nim test
   

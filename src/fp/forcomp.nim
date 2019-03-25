@@ -23,7 +23,7 @@ proc forCompImpl(yieldResult: bool, comp: NimNode): NimNode {.compileTime.} =
   expectLen(comp, 3)
   expectKind(comp, nnkInfix)
   expectKind(comp[0], nnkIdent)
-  assert($comp[0].ident == "|")
+  assert($comp[0] == "|")
 
   result = comp[1]
   var yieldNow = yieldResult

@@ -1,9 +1,9 @@
 import unittest,
-       future,
+       sugar,
        fp,
        json,
-       boost.typeutils,
-       boost.jsonserialize
+       boost/typeutils,
+       boost/jsonserialize
 
 suite "std.json":
 

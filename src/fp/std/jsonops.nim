@@ -1,11 +1,11 @@
 import json,
-       future,
+       sugar,
        typetraits,
        ../either,
        ../option,
        ../list,
        ../map,
-       boost.jsonserialize
+       boost/jsonserialize
 
 proc mget*(n: JsonNode, key: string|int): EitherS[Option[JsonNode]] =
   ## Returns the child node if it exists, or none.
@@ -45,7 +45,7 @@ proc value*[T](t: typedesc[T], n: JsonNode): EitherS[T] =
   when t is int or t is int64:
     tryS do() -> auto:
       JInt.checkKind
-      n.getNum.T
+      n.getBiggestInt.T
   elif t is string:
     tryS do() -> auto:
       JString.checkKind
@@ -53,11 +53,11 @@ proc value*[T](t: typedesc[T], n: JsonNode): EitherS[T] =
   elif t is float:
     tryS do() -> auto:
       JFloat.checkKind
-      n.getFNum
+      n.getFloat
   elif t is bool:
     tryS do() -> auto:
       JBool.checkKind
-      n.getBVal
+      n.getBool
   else:
     proc `$`[T](some:typedesc[T]): string = name(T)
     {.fatal: "Can't get value of type " & $T}

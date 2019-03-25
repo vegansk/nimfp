@@ -1,4 +1,4 @@
-import ../../src/fp/list, ../../src/fp/option, unittest, future, boost.types
+import ../../src/fp/list, ../../src/fp/option, unittest, sugar, boost/types
 
 suite "List ADT":
 

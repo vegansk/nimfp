@@ -1,5 +1,5 @@
-import future,
-       boost.types,
+import sugar,
+       boost/types,
        classy,
        ./list,
        ./option,

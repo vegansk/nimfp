@@ -2,8 +2,8 @@ import ../../src/fp/list,
        ../../src/fp/either,
        ../../src/fp/option,
        unittest,
-       future,
-       boost.types,
+       sugar,
+       boost/types,
        threadpool
 
 {.warning[SmallLshouldNotBeUsed]: off.}

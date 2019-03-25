@@ -1,8 +1,8 @@
 import unittest,
-       future,
-       fp.function,
-       fp.list,
-       fp.forcomp
+       sugar,
+       fp/function,
+       fp/list,
+       fp/forcomp
 
 suite "Functions":
 

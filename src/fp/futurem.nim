@@ -1,13 +1,13 @@
-import future,
+import sugar,
        asyncdispatch,
        ./trym,
        ./option,
        classy,
        ./kleisli,
-       boost.types,
+       boost/types,
        macros,
        ./function,
-       boost.typeclasses
+       boost/typeclasses
 
 export asyncdispatch
 
