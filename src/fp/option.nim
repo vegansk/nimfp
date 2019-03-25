@@ -89,6 +89,21 @@ proc flatMap*[T,U](o: Option[T], f: T -> Option[U]): Option[U] =
   ## Returns the result of applying `f` if `o` is defined, or none
   if o.isDefined: f(o.value) else: none(U)
 
+template flatMapIt*(o: Option, op: untyped): untyped =
+  type outType = type((
+    block:
+    var it{.inject.}: o.elemType;
+    op))
+
+  var result: Option[o.elemType]
+
+  if o.isDefined:
+    let it {.inject.} = o.get
+    result = op
+  else:
+    result = none(type(o.elemType))
+  result
+
 proc join*[T](mmt: Option[Option[T]]): Option[T] =
   ## Flattens the option
   mmt.flatMap(id)

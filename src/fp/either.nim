@@ -108,6 +108,21 @@ proc flatMap*[E,A,B](e: Either[E,A], f: A -> Either[E,B]): Either[E,B] =
   ## Returns the result of applying `f` to the right value or returns left value
   if e.isLeft: e.lValue.left(B) else: f(e.rValue)
 
+template flatMapIt*(e: Either, op: untyped): untyped =
+  type outType = type((
+    block:
+    var it{.inject.}: e.elemType;
+    op))
+
+  var result: Either[e.leftElemType, e.elemType]
+
+  if e.isLeft:
+    result = e.lValue.left(type(e.elemType))
+  else:
+    let it {.inject.} = e.rValue
+    result = op
+  result
+
 proc get*[E,A](e: Either[E,A]): A =
   ## Returns either's value if it is right, or fail
   doAssert(e.isRight, "Can't get Either's value")
@@ -377,6 +392,9 @@ proc asList*[E,A](e: Either[E,A]): List[A] =
 template elemType*(v: Either): typedesc =
   ## Part of ``do notation`` contract
   type(v.get)
+
+template leftElemType*(v: Either): typedesc =
+  type(v.getLeft)
 
 proc point*[E,A](v: A, e: typedesc[Either[E,A]]): Either[E,A] =
   v.right(E)
