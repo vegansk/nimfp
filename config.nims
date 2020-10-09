@@ -1,4 +1,4 @@
-import ospaths
+import os
 
 srcdir = "src"
 
